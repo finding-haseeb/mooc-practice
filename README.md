@@ -37,4 +37,4 @@ A practice website for the NPTEL **Psychology of Learning** (IIT Kharagpur) assi
 
 ---
 
-Made by **haseeb_production**
+Made by **haseeb_production** · Designed by **madxmonkey**
