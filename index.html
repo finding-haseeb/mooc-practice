@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Practice all NPTEL Psychology of Learning assignment MCQs with shuffled questions and options. By haseeb_production.">
+<title>Psychology of Learning Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: one centred exam column (max 720px); a quiet header strip, one question card at a time, score sheet at the end. */
+:root {
+  --bg: #eaf0ee;
+  --surface: #f9fbfa;
+  --ink: #17262a;
+  --muted: #56686b;
+  --line: #c9d6d3;
+  --accent: #0d6b63;
+  --accent-ink: #ffffff;
+  --accent-soft: #d3e9e5;
+  --mark: #e6a92e;
+  --mark-soft: #fbefd2;
+  --good: #1d7a3e;
+  --good-soft: #dcf0e2;
+  --bad: #b3372a;
+  --bad-soft: #f7e0dc;
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1719; --surface: #172225; --ink: #e4eeec; --muted: #93a7a9; --line: #2b3b3e;
+    --accent: #4fc1b5; --accent-ink: #062321; --accent-soft: #173a37;
+    --mark: #f0bb4f; --mark-soft: #3a2f17;
+    --good: #5fd08a; --good-soft: #163423; --bad: #f08a7c; --bad-soft: #3d1d19;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1719; --surface: #172225; --ink: #e4eeec; --muted: #93a7a9; --line: #2b3b3e;
+  --accent: #4fc1b5; --accent-ink: #062321; --accent-soft: #173a37;
+  --mark: #f0bb4f; --mark-soft: #3a2f17;
+  --good: #5fd08a; --good-soft: #163423; --bad: #f08a7c; --bad-soft: #3d1d19;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--bg); }
+body { color: var(--ink); font-family: var(--f-body); font-size: 1rem; line-height: 1.55; margin: 0; padding: 0 16px; }
+.wrap { max-width: 720px; margin: 0 auto; padding-block: 28px 20px; display: flex; flex-direction: column; gap: 22px; min-height: 100vh; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, label:focus-within { outline: 3px solid var(--mark); outline-offset: 2px; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.eyebrow { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .09em; text-transform: uppercase; color: var(--muted); }
+
+/* header */
+.top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; }
+.brand .dot { width: 26px; height: 26px; border-radius: 7px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-size: .8rem; font-family: var(--f-mono); }
+.ghost { background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: .88rem; color: var(--muted); }
+.ghost:hover { color: var(--ink); border-color: var(--muted); }
+
+/* start screen */
+.hero { display: flex; flex-direction: column; gap: 10px; }
+.hero h1 { font-size: clamp(2rem, 6vw, 3.1rem); font-weight: 800; letter-spacing: -.02em; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero p { margin: 0; color: var(--muted); max-width: 58ch; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: .9rem; color: var(--muted); }
+.stats b { color: var(--ink); font-family: var(--f-mono); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; display: flex; flex-direction: column; gap: 20px; }
+.field { display: flex; flex-direction: column; gap: 10px; }
+.field-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.field-head h3 { font-size: 1.02rem; }
+.linkish { background: none; border: 0; color: var(--accent); font-size: .85rem; padding: 0; text-decoration: underline; text-underline-offset: 3px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.chip span { display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); font-size: .9rem; user-select: none; }
+.chip input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chip small { font-family: var(--f-mono); font-size: .72rem; opacity: .75; }
+.toggles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.toggle { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; background: var(--bg); }
+.toggle input { accent-color: var(--accent); width: 18px; height: 18px; margin: 2px 0 0; flex: none; }
+.toggle b { display: block; font-size: .95rem; }
+.toggle span { font-size: .84rem; color: var(--muted); }
+.count-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.primary { background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 12px; padding: 14px 22px; font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; }
+.primary:hover { filter: brightness(1.07); }
+.primary:disabled { opacity: .45; cursor: not-allowed; }
+.secondary { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 18px; font-weight: 700; }
+.secondary:hover { border-color: var(--muted); }
+.resume { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--mark-soft); border: 1px solid var(--mark); border-radius: var(--r); padding: 14px 16px; }
+.resume p { margin: 0; }
+.note { font-size: .82rem; color: var(--muted); margin: 0; }
+
+/* quiz */
+.progress { display: flex; flex-direction: column; gap: 8px; }
+.progress-meta { display: flex; justify-content: space-between; gap: 10px; font-size: .85rem; color: var(--muted); }
+.bar { height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .25s ease; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: clamp(18px, 4vw, 30px); display: flex; flex-direction: column; gap: 20px; }
+.qhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.tag { font-family: var(--f-mono); font-size: .74rem; padding: 4px 10px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); }
+.qnum { font-family: var(--f-display); font-weight: 800; font-size: 2.4rem; line-height: 1; color: var(--line); }
+.qtext { font-family: var(--f-display); font-weight: 500; font-size: clamp(1.15rem, 3.2vw, 1.4rem); line-height: 1.35; overflow-wrap: anywhere; }
+.opts { display: flex; flex-direction: column; gap: 10px; }
+.opt { display: flex; gap: 14px; align-items: center; text-align: left; width: 100%; padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--bg); transition: border-color .12s, background .12s; }
+.opt:hover { border-color: var(--accent); }
+.opt .key { flex: none; width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; font-family: var(--f-mono); font-weight: 700; font-size: .9rem; border: 1.5px solid var(--line); background: var(--surface); }
+.opt .txt { min-width: 0; overflow-wrap: anywhere; }
+.opt[aria-checked="true"] { border-color: var(--mark); background: var(--mark-soft); }
+.opt[aria-checked="true"] .key { background: var(--mark); border-color: var(--mark); color: #1d1503; }
+.nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.nav .right { display: flex; gap: 10px; margin-left: auto; }
+.hint { font-size: .8rem; color: var(--muted); }
+.confirm { background: var(--mark-soft); border: 1px solid var(--mark); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.confirm p { margin: 0; }
+.confirm .row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* results */
+.score { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; }
+.ring { width: 150px; height: 150px; position: relative; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring .val { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+.ring .val b { font-family: var(--f-display); font-size: 2.3rem; font-weight: 800; line-height: 1; display: block; }
+.ring .val small { font-family: var(--f-mono); font-size: .75rem; color: var(--muted); }
+.verdict h2 { font-size: clamp(1.5rem, 4.5vw, 2rem); }
+.verdict p { margin: 6px 0 0; color: var(--muted); }
+.tally { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.tile { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--bg); }
+.tile b { font-family: var(--f-mono); font-size: 1.5rem; display: block; font-variant-numeric: tabular-nums; }
+.tile span { font-size: .82rem; color: var(--muted); }
+.tile.good b { color: var(--good); } .tile.bad b { color: var(--bad); }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.tab { background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 12px; font-weight: 700; color: var(--muted); margin-bottom: -1px; }
+.tab[aria-selected="true"] { color: var(--ink); border-color: var(--accent); }
+.review { display: flex; flex-direction: column; gap: 12px; }
+.ritem { border: 1px solid var(--line); border-left: 4px solid var(--bad); border-radius: 10px; padding: 14px 16px; background: var(--surface); display: flex; flex-direction: column; gap: 8px; }
+.ritem.ok { border-left-color: var(--good); }
+.ritem .rq { font-weight: 700; overflow-wrap: anywhere; }
+.ritem .meta { display: flex; gap: 8px; align-items: center; font-family: var(--f-mono); font-size: .72rem; color: var(--muted); }
+.ans { display: flex; gap: 8px; align-items: baseline; font-size: .93rem; overflow-wrap: anywhere; }
+.ans .lbl { flex: none; font-family: var(--f-mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; padding: 2px 7px; border-radius: 6px; }
+.ans.yours .lbl { background: var(--bad-soft); color: var(--bad); }
+.ans.right .lbl { background: var(--good-soft); color: var(--good); }
+.ans.skip .lbl { background: var(--mark-soft); color: var(--ink); }
+.ropts { display: flex; flex-direction: column; gap: 6px; }
+.ropt { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); font-size: .93rem; }
+.ropt .key { flex: none; width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center; font-family: var(--f-mono); font-weight: 700; font-size: .8rem; border: 1.5px solid var(--line); background: var(--surface); }
+.ropt .txt { flex: 1 1 12ch; min-width: 0; overflow-wrap: anywhere; }
+.ropt .rtag { font-family: var(--f-mono); font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 700; }
+.ropt.right { border-color: var(--good); background: var(--good-soft); }
+.ropt.right .key { background: var(--good); border-color: var(--good); color: var(--surface); }
+.ropt.right .rtag { color: var(--good); }
+.ropt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.ropt.wrong .key { background: var(--bad); border-color: var(--bad); color: var(--surface); }
+.ropt.wrong .rtag { color: var(--bad); }
+.empty { text-align: center; padding: 24px; color: var(--muted); border: 1px dashed var(--line); border-radius: 12px; }
+
+footer { margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: .84rem; color: var(--muted); }
+footer .credit b { font-family: var(--f-mono); color: var(--accent); font-weight: 700; }
+
+@media (max-width: 520px) {
+  .score { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+  .tally { grid-template-columns: 1fr 1fr 1fr; }
+  .tile b { font-size: 1.25rem; }
+  .qnum { font-size: 1.8rem; }
+  .ropt .rtag { flex-basis: 100%; padding-left: 36px; margin-top: -4px; }
+  .nav .right { width: 100%; }
+  .nav .right .primary { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><span class="dot">PL</span>Psychology of Learning</div>
+    <button class="ghost" id="themeBtn" type="button">Dark mode</button>
+  </header>
+
+  <main id="app"></main>
+
+  <footer>
+    <span class="credit">Made with care by <b>haseeb_production</b></span>
+    <span>NPTEL · IIT Kharagpur · Weeks 0–12 practice</span>
+  </footer>
+</div>
+
+<script>
+const QUESTIONS = [{"w": 0, "q": "What is Psychology?", "o": ["Just a social media trend", "An art of living", "A subject about human body", "A study of cognitive processes & behavior"], "a": 3}, {"w": 0, "q": "A broad field of study that explores a variety of questions about thoughts, feelings and actions is ___?", "o": ["Society", "Globalization", "Psychology", "Social Science"], "a": 2}, {"w": 0, "q": "Learning has been a central topic of research in ___.", "o": ["Chemistry", "Physics", "Mathematics", "Psychology"], "a": 3}, {"w": 0, "q": "The word Psyche means ___?", "o": ["Body or physique", "Mind or soul", "Spirituality", "Hormones"], "a": 1}, {"w": 0, "q": "The ___ of learning focuses on how people learn.", "o": ["psychology", "english", "chemistry", "none of the given"], "a": 0}, {"w": 0, "q": "To help people to function effectively and fulfill their own unique potential” is the aim of___ ___?", "o": ["Humanistic psychology", "Evolutionary biology", "Computer science", "Microbiology"], "a": 0}, {"w": 0, "q": "Psychology is not an independent science, but dependent on other fields.", "o": ["True", "False"], "a": 1}, {"w": 0, "q": "The study of changes in an individual’s behavior during his/her lifetime is called ___.", "o": ["Hormonal psychology", "Gender psychology", "Developmental Psychology", "Genetics or Heredity"], "a": 2}, {"w": 0, "q": "The study of differences and similarities in the behavior of animals of different species is called - ___.", "o": ["Developmental psychology", "Cultural psychology", "Personality psychology", "Comparative Psychology"], "a": 3}, {"w": 0, "q": "Humans are incapable of learning.", "o": ["True", "False"], "a": 1}, {"w": 1, "q": "Learning is often seen as the contiguous causal effect of ___ on behavior.", "o": ["blood", "bone density", "trauma", "experience"], "a": 3}, {"w": 1, "q": "In order to say that learning has occurred, a hidden change in behavior must occur.", "o": ["True", "False"], "a": 1}, {"w": 1, "q": "Which of the following is not a mental construct?", "o": ["skeleton", "knowledge", "representations", "associations"], "a": 0}, {"w": 1, "q": "Learning changes the ___ structure of the brain through the process of continuous interactions between the learner and the external environment.", "o": ["physical", "social", "biological", "none of the given"], "a": 0}, {"w": 1, "q": "___ shapes the learning process.", "o": ["Only thoughts", "Only emotions", "Both thoughts and emotions", "Neither thoughts nor emotions"], "a": 2}, {"w": 1, "q": "Watson's work included the famous Little Albert experiment in which he conditioned a small child to ___ a white rat.", "o": ["fear", "love", "hate", "play with"], "a": 0}, {"w": 1, "q": "Behaviorism dominated psychology for much of the early ___ century.", "o": ["20th", "19th", "18th", "17th"], "a": 0}, {"w": 1, "q": "The state of “conscious incompetence” may be valuable ___ of a learning experience.", "o": ["at the end", "in the middle", "2 years after the end", "at the start"], "a": 3}, {"w": 1, "q": "Which of the following is not an outcome of effective e-learning?", "o": ["wider range of strategies", "more reflective approach", "more positive emotions towards learning", "more disconnected knowledge"], "a": 3}, {"w": 1, "q": "Instrumental conditioning is an example of ___ learning.", "o": ["sensitization", "habituation", "associative", "meaningful"], "a": 2}, {"w": 2, "q": "The three major types of learning described by ___ psychology are classical conditioning, operant conditioning and observational learning.", "o": ["cognitive", "behavioral", "emotional", "evolutionary"], "a": 1}, {"w": 2, "q": "According to the view of Watson, psychology is ___.", "o": ["subjective", "only descriptive", "experimental", "about internal mental processes that cannot be measured and observed"], "a": 2}, {"w": 2, "q": "___ is given by Ivan Pavlov.", "o": ["Operant conditioning", "Functional conditioning", "Classical conditioning", "Modern conditioning"], "a": 2}, {"w": 2, "q": "The process by which organisms learn to respond to certain stimuli but not to others is known as ___.", "o": ["stimulus generalization", "stimulus appreciation", "stimulus discrimination", "stimulus differentiation"], "a": 2}, {"w": 2, "q": "Higher-order conditioning is intrinsically weaker than its first-order counterpart.", "o": ["True", "False"], "a": 0}, {"w": 2, "q": "___ is the process of gradually changing the quality of a response.", "o": ["Shaping", "Modeling", "Cueing", "Shifting"], "a": 0}, {"w": 2, "q": "The works of ___ were instrumental in engendering the dramatic shift from behaviorism to cognitive theories.", "o": ["Edward C. Tolman", "Jean Piaget", "German Gestalt", "All of the given"], "a": 3}, {"w": 2, "q": "___ intelligence is the ability to perceive the visual–spatial world accurately and involves sensitivity to color, line, shape, form, space, and the potential for recognizing and manipulating the patterns of spaces.", "o": ["Interpersonal", "Spatial", "Bodily-kinesthetic", "Linguistic"], "a": 1}, {"w": 2, "q": "Sternberg proposed his theory in 1985 as an alternative to the idea of the ___.", "o": ["general intelligence factor", "multiple intelligences", "specific intelligence factor", "unconscious intelligence"], "a": 0}, {"w": 2, "q": "Which of the following is not a kind of product in the structure of intellect model?", "o": ["symbolic", "classes", "systems", "implications"], "a": 0}, {"w": 3, "q": "The connections between nerves cells are called ___.", "o": ["systems", "syntaxes", "neurons", "synapses"], "a": 3}, {"w": 3, "q": "In order to create a ___, information must be changed into a usable form, which occurs through a process known as encoding.", "o": ["past memory", "new imagination", "new memory", "past imagination"], "a": 2}, {"w": 3, "q": "Calling back the stored information in response to some cue for use in a process or activity is called ___.", "o": ["Retrieval", "Recall", "Recollection", "All of the given"], "a": 3}, {"w": 3, "q": "For many with ___ deficits, reading facial expressions and knowing how to respond are confusing daily challenges.", "o": ["memory", "intelligence", "social cognition", "biological cognition"], "a": 2}, {"w": 3, "q": "The Information Processing View of Learning assumes that there are limits to how much information can be processed at each stage.", "o": ["True", "False"], "a": 0}, {"w": 3, "q": "The Information Processing View of Learning assumes that information process is involved in ___", "o": ["forgetting", "remembering", "perceiving", "All of the given"], "a": 3}, {"w": 3, "q": "The capacity of the sensory register is ___.", "o": ["very small", "very large", "7+/-2 chunks", "unlimited"], "a": 1}, {"w": 3, "q": "Most children do not begin to engage in the process of rehearsal on their own until about age ___.", "o": ["seven", "two", "thirteen", "one"], "a": 0}, {"w": 3, "q": "___ provides an interface between the sub-systems of working memory and the part of long term memory specialized for episodic memory.", "o": ["Phonological loop", "Visuo-spatial sketchpad", "Retrieval buffer", "Episodic buffer"], "a": 3}, {"w": 3, "q": "Memories of specific episodes of one’s life refers to ___.", "o": ["declarative memory", "experimental episodic memory", "autobiographical episodic memory", "procedural memory"], "a": 2}, {"w": 4, "q": "___ thinking is the ability to create mental representations of objects, places, events, or people in your mind.", "o": ["General", "Creative", "Divergent", "Symbolic"], "a": 3}, {"w": 4, "q": "We compare new information to our ___ of the person, place, or thing, so we know how to categorize the new information mentally.", "o": ["protofit", "protobite", "prototype", "none of the given"], "a": 2}, {"w": 4, "q": "Which of the following is not true?", "o": ["Thinking is a higher mental process", "Thinking is a sub-vocal talking", "Thinking is fulfilling a need or problem solving", "Thinking is only done in verbal symbols"], "a": 3}, {"w": 4, "q": "Mental images are ___.", "o": ["Auditory", "Visual", "Gustatory", "All of the given"], "a": 3}, {"w": 4, "q": "___ organize complex phenomena into simpler, easily understandable, and usable categories and help to solve our problems.", "o": ["Concepts", "Propositions", "Constructs", "Components"], "a": 0}, {"w": 4, "q": "The lowermost level of Bloom’s taxonomy is ___.", "o": ["remember", "apply", "understand", "analyze"], "a": 0}, {"w": 4, "q": "The psychomotor domain of the Bloom’s taxonomy is concerned with ___.", "o": ["Biological makeup", "Thoughts and beliefs", "Feelings and emotions", "Skilled behavior"], "a": 3}, {"w": 4, "q": "Which of the following is an example of meta-cognition skills?", "o": ["Ignoring your limits", "Self-monitoring", "Skimming all important information", "All of the given"], "a": 1}, {"w": 4, "q": "___ critical thinking skill helps you analyze and process information to come to an unbiased conclusion.", "o": ["Open-mindedness", "Self-regulation", "Self-control", "Observation"], "a": 0}, {"w": 4, "q": "The inspiration phase of the creative thinking process refers to the ___ stage.", "o": ["Incubation", "Insight", "Evaluation", "Preparation"], "a": 3}, {"w": 5, "q": "Which of the following is true about motivation?", "o": ["It is a physical impulse", "It is an external process", "It has a willingness to activate but not channel the attitudes of learners", "None of the given"], "a": 3}, {"w": 5, "q": "The term “motivation” comes from a ___ word.", "o": ["Greek", "Latin", "Hindi", "Bengali"], "a": 1}, {"w": 5, "q": "It is called extrinsic motivation if causal factor is ___.", "o": ["curiosity", "social pressure", "self-satisfaction", "needs"], "a": 1}, {"w": 5, "q": "___ motivation is considered to be more crucial for students as it is associated with deep learning, better performance and self-efficacy.", "o": ["Intrinsic", "Extrinsic", "Introjected regulation", "None of the given"], "a": 0}, {"w": 5, "q": "___ proposed that there are three primary drives that drive human behavior.", "o": ["Hull", "Watson", "Piaget", "Gestalt"], "a": 0}, {"w": 5, "q": "Expectancy Theory of Motivation was developed by ___.", "o": ["Vroom", "Hull", "Murray", "None of the given"], "a": 0}, {"w": 5, "q": "An example of ___ is thinking, “If I work hard I can achieve the targets my boss has set for me”.", "o": ["purposeful", "valence", "instrumentality", "expectancy"], "a": 3}, {"w": 5, "q": "In SMART goals, T stands for ___.", "o": ["Temporary", "Time-based", "Tough", "Testing"], "a": 1}, {"w": 5, "q": "Friendship is a ___ need in Maslow’s hierarchy.", "o": ["Love and belonging", "Esteem", "Physiological", "Safety"], "a": 0}, {"w": 5, "q": "___ theory differentiates between autonomous motivation and controlled motivation.", "o": ["Arousal", "Goal-setting", "Need hierarchy", "Self-determination"], "a": 3}, {"w": 6, "q": "According to Daniel Goleman, ___ component of emotional intelligence focuses on how we handle relationships with others.", "o": ["self-awareness", "motivation", "empathy", "emotional regulation"], "a": 2}, {"w": 6, "q": "Emotional intelligence can be considered a type of ___ intelligence.", "o": ["academic", "genetic", "social", "external"], "a": 2}, {"w": 6, "q": "Noticing a difficult emotion and slowing down or resisting any impulsive action that may follow highlights ___ component of emotional intelligence.", "o": ["Self-regulation", "Motivation", "Emotional literacy", "Empathy"], "a": 0}, {"w": 6, "q": "The following are signs of emotional intelligence, except ___.", "o": ["strong sense of curiosity", "holding onto mistakes", "ability to manage emotions in difficult situations", "self-confidence"], "a": 1}, {"w": 6, "q": "Perceiving emotions means ___.", "o": ["Ignoring signals", "Understanding only what somebody is saying to you", "Understanding only somebody’s facial expression", "Understanding both verbal and nonverbal signals"], "a": 3}, {"w": 6, "q": "___ suggests that 10 distinct components provide the scaffolding of emotionally and socially intelligent behaviors:", "o": ["Bar-On", "Goleman", "Salovey", "Mayer"], "a": 0}, {"w": 6, "q": "Which of the following is a facilitator of EQ?", "o": ["optimism", "happiness", "independence", "all of the given"], "a": 3}, {"w": 6, "q": "___ is a strategy for improving one’s self-awareness.", "o": ["rejecting feedback", "using critical self-talk daily", "developing a fixed mindset", "pursuing one’s passion"], "a": 3}, {"w": 6, "q": "Having students create autobiographies is an example of creating opportunities for ___.", "o": ["emotional labor", "emotional contagion", "metacognition", "none of the given"], "a": 2}, {"w": 6, "q": "Which of the following is not true about management of emotions?", "o": ["It is essentially a private act", "It is directly regulated by others", "It is influenced by cultural norms", "It is influenced by what society defines as appropriate to feel and express"], "a": 1}, {"w": 7, "q": "Which of the following is false about learning according to Gagne’s definition?", "o": ["It is a change in human disposition", "It persists over a period of time", "It is simply ascribable to processes of growth", "None of the above"], "a": 2}, {"w": 7, "q": "Manual or physical skills come under ___ component of Bloom’s taxonomy.", "o": ["Cognitive", "Affective", "Psychomotor", "Physical"], "a": 2}, {"w": 7, "q": "Reflection, learning and education was explored by ___.", "o": ["Carl Rogers", "John Watson", "Benjamin Bloom", "John Dewey"], "a": 3}, {"w": 7, "q": "The principles of ___ refer to how close in time two events must be for a bond to be formed.", "o": ["behavior", "reinforcement", "repetition", "contiguity"], "a": 3}, {"w": 7, "q": "___ gives information to learners about their success or failure concerning the task at hand.", "o": ["Cognitive feedback", "Emotional feedback", "Reinforcement", "Physical feedback"], "a": 0}, {"w": 7, "q": "The ___ orientation to learning has a quality of personal involvement—the whole person in both feeling and cognitive aspects being in the learning event.", "o": ["behavioral", "cognitive", "humanistic", "social"], "a": 2}, {"w": 7, "q": "Learning through play is ___ learning.", "o": ["primary", "secondary", "passive", "active"], "a": 3}, {"w": 7, "q": "People with ___ learning style are prone to sorting their ideas after speaking, rather than thinking ideas through before.", "o": ["logical", "solitary", "visual", "auditory"], "a": 3}, {"w": 7, "q": "Which of the following statements is false?", "o": ["Effective instruction is static", "Effective instruction is eclectic", "Effective instruction is generative", "Effective instruction is interactive"], "a": 0}, {"w": 7, "q": "In ADDIE model, I stand for ___.", "o": ["instruction", "implementation", "integration", "induction"], "a": 1}, {"w": 8, "q": "The word ‘pedagogy’ has been derived from the ___ word “pedagogue”.", "o": ["Latin", "Sanskrit", "Greek", "English"], "a": 2}, {"w": 8, "q": "Which of the following statements is not true about pedagogy?", "o": ["It is a method or way of teaching", "It is derived from the Greek word “pedagogue”", "It helps a teacher understand how learning should be facilitated.", "It harms the quality of teaching and learning."], "a": 3}, {"w": 8, "q": "Pedagogy can enhance the student-teacher relationship.", "o": ["True", "False"], "a": 0}, {"w": 8, "q": "___ learning is based on the model that knowledge can be created within a population where members actively interact by sharing experiences and take on asymmetry roles.", "o": ["integrative", "inquiry-based", "collaborative", "constructivist"], "a": 2}, {"w": 8, "q": "The Pedagogical Model provides an overview of the learning cycle and breaks it down into ___ domains or phases of instruction.", "o": ["five", "three", "two", "seven"], "a": 0}, {"w": 8, "q": "Which of the following is not a type of inquiry-based approach?", "o": ["confrontation", "structure", "guided", "open"], "a": 0}, {"w": 8, "q": "In experiential learning, students are engaged ___.", "o": ["intellectually", "soulfully", "socially", "all of the given"], "a": 3}, {"w": 8, "q": "___ stage of experiential theory by Kolb focuses on planning.", "o": ["concrete experience", "abstract conceptualization", "reflective observation", "active experimentation"], "a": 3}, {"w": 8, "q": "People with a ___ learning style can often act on “gut feeling” and will rely on others' analysis rather than their own.", "o": ["accommodating", "converging", "diverging", "assimilating"], "a": 0}, {"w": 8, "q": "According to the ___ principle, students learn better from animation and narration than from animation and on-screen text.", "o": ["multimedia", "modality", "coherence", "temporal contiguity"], "a": 1}, {"w": 9, "q": "E-learning is any form of ___.", "o": ["teaching", "training", "tutoring", "all of the given"], "a": 3}, {"w": 9, "q": "___ is a feature of e-learning.", "o": ["difficulty in access", "user friendliness", "social injustice", "closed learning"], "a": 1}, {"w": 9, "q": "E-learning is a synonym of audio-visual learning, multimedia learning, and distance learning.", "o": ["True", "False"], "a": 1}, {"w": 9, "q": "Which of the following is not a type of e-learning?", "o": ["text-driven", "interactive", "simulation", "physical"], "a": 3}, {"w": 9, "q": "Which of the following is not a benefit of e-learning?", "o": ["It can accommodate the need of a housewife", "People can revise the learning content as many times as they want", "It facilitates in developing and communicating new training policies", "None of the given"], "a": 3}, {"w": 9, "q": "Good learners know ___.", "o": ["What they are learning", "Why they are learning", "How they are learning", "All of the given"], "a": 3}, {"w": 9, "q": "Learners may multitask when engaging in an online course, which could be resulting in ___.", "o": ["hyperfocus", "better retrieval", "shorter attention spans", "None of the given"], "a": 2}, {"w": 9, "q": "___ learning is the crucial determinant of successful e-learning.", "o": ["passive", "retrospective", "social", "active"], "a": 3}, {"w": 9, "q": "The brain can process 36,000 visual cues per___.", "o": ["hour", "second", "day", "year"], "a": 0}, {"w": 9, "q": "For effective learning, online courses should ___.", "o": ["use headings", "use complex language", "present long pieces of text", "use random images"], "a": 0}, {"w": 10, "q": "During Covid-19 the world was busy in preparing 1.5 billion learners for the new normal, i.e., ___ learning.", "o": ["ineffective", "physical", "remote", "experiential"], "a": 2}, {"w": 10, "q": "To develop learner readiness for online learning, training sessions on ___ are helpful.", "o": ["netiquettes", "time management", "developing study skills", "all of the given"], "a": 3}, {"w": 10, "q": "The typical picture of a teacher being a dispenser of knowledge to the students has been replaced by that of a ___.", "o": ["obstructor", "parent", "friend", "facilitator"], "a": 3}, {"w": 10, "q": "In 2018, Global Education and Skills Forum noted that the ‘future’ teacher would need the 5 skills to thrive in the 21st century. Which of the following is not one of them?", "o": ["Strong social skills", "Data analysis", "External focus", "Strictness"], "a": 3}, {"w": 10, "q": "Participatory education demands ___ so as to build a needs-based approach to teaching.", "o": ["creativity", "stubbornness", "reward", "none of the given"], "a": 0}, {"w": 10, "q": "Students who consider intelligence as a malleable entity tend to focus on their obstacles instead of goals.", "o": ["True", "False"], "a": 1}, {"w": 10, "q": "Which of the following is not a principle to enhance student learning.", "o": ["What students already know affects their learning", "Learning is context-based", "Students’ cognitive development and learning is limited by the general stages of development.", "The acquisition of knowledge and skills in the long term depends largely on practice."], "a": 2}, {"w": 10, "q": "___ feedback to students is important for learning.", "o": ["Unclear", "Late", "Harsh", "Explanatory"], "a": 3}, {"w": 10, "q": "Mastery goals are those that are geared towards the acquisition or improvement of___.", "o": ["Skills", "Number of students in a classroom", "Teacher feedback", "None of the given"], "a": 0}, {"w": 10, "q": "The vast majority of formative assessment is___.", "o": ["Formal", "Incorrect", "Written", "informal"], "a": 3}, {"w": 11, "q": "Social cognition has a protracted development through infancy to ___.", "o": ["teenage", "old-age", "adulthood", "death"], "a": 2}, {"w": 11, "q": "Which of the following abilities comes under social cognition?", "o": ["Face processing", "Joint attention", "Theory of mind", "All of the given"], "a": 3}, {"w": 11, "q": "Under social cognition, abilities involved in affective processing are often called ___.", "o": ["hot", "cold", "white", "black"], "a": 0}, {"w": 11, "q": "Social schemas refer to people's mental representations of social ___.", "o": ["values", "memories", "skills", "patterns"], "a": 3}, {"w": 11, "q": "During the earliest stages of development, children are very ___-centric. They see the world from their own perspective and struggle to think about how other people may view the world.", "o": ["selfish", "ego", "conscious", "emotional"], "a": 1}, {"w": 11, "q": "A theory of mind refers to a person's ability to understand and think about the ___ of other people.", "o": ["behaviors", "family backgrounds", "mental states", "language"], "a": 2}, {"w": 11, "q": "The same social behavior in one cultural setting might have a very different meaning and interpretation if it were to occur or be observed in another culture.", "o": ["True", "False"], "a": 0}, {"w": 11, "q": "Social cognitive theory by Bandura focuses on concepts of ___.", "o": ["self-efficacy", "modeling", "observational learning", "all of the given"], "a": 3}, {"w": 11, "q": "The central tenet of Bandura’s social-cognitive theory is that people seek to develop a sense of ___ over the important events in their lives.", "o": ["agency", "dependency", "attachment", "emotion"], "a": 0}, {"w": 11, "q": "___ hypothesis suggests that social processes influence how information is selected, organized, integrated, and retrieved.", "o": ["activation", "cognitive influence", "interaction", "social cue strength"], "a": 1}, {"w": 12, "q": "Sustainability in economic sustainability is ___.", "o": ["multidimensional", "bidimensional", "unidimensional", "none of the given"], "a": 2}, {"w": 12, "q": "The term \"sustainable development\" was first mentioned in a book related to the 1972 UN Stockholm conference on ___.", "o": ["water", "poverty", "economic crisis", "human environment"], "a": 3}, {"w": 12, "q": "Environmental sustainability focuses on impacts of processes, products and services on ___.", "o": ["water", "biodiversity", "human health", "all of the given"], "a": 3}];
+</script>
+<script>
+(function () {
+  const WEEK_LABEL = w => "Week " + w;
+  const LETTERS = ["A", "B", "C", "D", "E", "F"];
+  const STORE_KEY = "pol-quiz-v1";
+  const app = document.getElementById("app");
+
+  const store = {
+    get() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || "null"); } catch (e) { return null; } },
+    set(v) { try { localStorage.setItem(STORE_KEY, JSON.stringify(v)); } catch (e) {} },
+    clear() { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
+  };
+
+  // Theme toggle
+  const themeBtn = document.getElementById("themeBtn");
+  function isDark() {
+    const t = document.documentElement.getAttribute("data-theme");
+    if (t) return t === "dark";
+    return window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function syncThemeBtn() { themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
+  themeBtn.addEventListener("click", () => {
+    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
+    syncThemeBtn();
+    try { localStorage.setItem("pol-theme", document.documentElement.getAttribute("data-theme")); } catch (e) {}
+  });
+  try { const t = localStorage.getItem("pol-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+  syncThemeBtn();
+
+  const WEEKS = [...new Set(QUESTIONS.map(q => q.w))].sort((a, b) => a - b);
+  const perWeek = w => QUESTIONS.filter(q => q.w === w).length;
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  // State
+  let settings = { weeks: WEEKS.slice(), count: "all", shuffleQ: true, shuffleO: true };
+  let run = null; // { items: [{id, order:[optIdx...]}], answers: [displayIdx|null], i, done }
+
+  function buildRun(ids) {
+    let list = ids.slice();
+    if (settings.shuffleQ) list = shuffle(list);
+    if (settings.count !== "all") list = list.slice(0, Number(settings.count));
+    const items = list.map(id => {
+      const n = QUESTIONS[id].o.length;
+      const base = [...Array(n).keys()];
+      // Keep True/False in natural order; shuffle everything else when enabled.
+      const isTF = n === 2 && /^true$/i.test(QUESTIONS[id].o[0]);
+      return { id, order: settings.shuffleO && !isTF ? shuffle(base) : base };
+    });
+    run = { items, answers: items.map(() => null), i: 0, done: false };
+    save();
+  }
+  function save() { store.set({ settings, run }); }
+
+  // ---------- Start screen ----------
+  function renderStart() {
+    const saved = store.get();
+    const canResume = saved && saved.run && !saved.run.done && saved.run.items && saved.run.items.length;
+    const answeredSaved = canResume ? saved.run.answers.filter(a => a !== null).length : 0;
+
+    app.innerHTML = `
+      <section class="hero">
+        <span class="eyebrow">NPTEL assignment practice</span>
+        <h1>Test yourself on all <em>${QUESTIONS.length}</em> questions</h1>
+        <p>One question at a time. You choose an answer, move on, and get your score out of 100 at the end, along with every question you got wrong.</p>
+        <div class="stats">
+          <span><b>${QUESTIONS.length}</b> questions</span>
+          <span><b>${WEEKS.length}</b> weeks</span>
+          <span><b>${QUESTIONS.filter(q => q.o.length === 2).length}</b> true/false</span>
+        </div>
+      </section>
+      ${canResume ? `
+      <div class="resume">
+        <p><b>You have a quiz in progress.</b> ${answeredSaved} of ${saved.run.items.length} answered.</p>
+        <div class="actions">
+          <button class="primary" id="resumeBtn" type="button">Resume</button>
+          <button class="secondary" id="discardBtn" type="button">Discard</button>
+        </div>
+      </div>` : ""}
+      <section class="panel">
+        <div class="field">
+          <div class="field-head">
+            <h3>Weeks to include</h3>
+            <span><button class="linkish" id="allW" type="button">Select all</button> · <button class="linkish" id="noneW" type="button">Clear</button></span>
+          </div>
+          <div class="chips" id="weekChips">
+            ${WEEKS.map(w => `
+              <label class="chip"><input type="checkbox" id="wk-${w}" value="${w}" ${settings.weeks.includes(w) ? "checked" : ""}>
+              <span>${WEEK_LABEL(w)} <small>${perWeek(w)}</small></span></label>`).join("")}
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-head"><h3>How many questions</h3></div>
+          <div class="chips count-row" id="countChips">
+            ${["10", "25", "50", "all"].map(c => `
+              <label class="chip"><input type="radio" name="count" id="cnt-${c}" value="${c}" ${settings.count === c ? "checked" : ""}>
+              <span>${c === "all" ? "All selected" : c}</span></label>`).join("")}
+          </div>
+        </div>
+        <div class="toggles">
+          <label class="toggle"><input type="checkbox" id="shQ" ${settings.shuffleQ ? "checked" : ""}>
+            <div><b>Shuffle questions</b><span>New random order every attempt</span></div></label>
+          <label class="toggle"><input type="checkbox" id="shO" ${settings.shuffleO ? "checked" : ""}>
+            <div><b>Shuffle options</b><span>A, B, C, D appear in a new order</span></div></label>
+        </div>
+        <div class="field">
+          <button class="primary" id="startBtn" type="button"></button>
+          <p class="note">Your progress is saved in this browser, so you can close the page and resume later.</p>
+        </div>
+      </section>`;
+
+    const startBtn = document.getElementById("startBtn");
+    function readSettings() {
+      settings.weeks = [...app.querySelectorAll("#weekChips input:checked")].map(i => Number(i.value));
+      settings.count = (app.querySelector("#countChips input:checked") || {}).value || "all";
+      settings.shuffleQ = document.getElementById("shQ").checked;
+      settings.shuffleO = document.getElementById("shO").checked;
+      const pool = QUESTIONS.filter(q => settings.weeks.includes(q.w)).length;
+      const n = settings.count === "all" ? pool : Math.min(pool, Number(settings.count));
+      startBtn.textContent = pool ? `Start quiz · ${n} question${n === 1 ? "" : "s"}` : "Pick at least one week";
+      startBtn.disabled = !pool;
+    }
+    app.querySelector(".panel").addEventListener("change", readSettings);
+    document.getElementById("allW").onclick = () => { app.querySelectorAll("#weekChips input").forEach(i => i.checked = true); readSettings(); };
+    document.getElementById("noneW").onclick = () => { app.querySelectorAll("#weekChips input").forEach(i => i.checked = false); readSettings(); };
+    startBtn.onclick = () => {
+      readSettings();
+      const ids = QUESTIONS.map((q, id) => id).filter(id => settings.weeks.includes(QUESTIONS[id].w));
+      buildRun(ids);
+      renderQuestion();
+    };
+    if (canResume) {
+      document.getElementById("resumeBtn").onclick = () => { settings = saved.settings || settings; run = saved.run; renderQuestion(); };
+      document.getElementById("discardBtn").onclick = () => { store.clear(); renderStart(); };
+    }
+    readSettings();
+  }
+
+  // ---------- Question screen ----------
+  function renderQuestion(showConfirm) {
+    const total = run.items.length;
+    const it = run.items[run.i];
+    const q = QUESTIONS[it.id];
+    const sel = run.answers[run.i];
+    const answered = run.answers.filter(a => a !== null).length;
+    const last = run.i === total - 1;
+    const unanswered = total - answered;
+
+    app.innerHTML = `
+      <section class="progress" aria-label="Progress">
+        <div class="progress-meta"><span class="mono">Question ${run.i + 1} of ${total}</span><span class="mono">${answered} answered</span></div>
+        <div class="bar"><i style="width:${(answered / total) * 100}%"></i></div>
+      </section>
+      <article class="card">
+        <div class="qhead"><span class="tag">${WEEK_LABEL(q.w)}</span><span class="qnum mono">${String(run.i + 1).padStart(2, "0")}</span></div>
+        <div class="qtext" id="qtext">${esc(q.q)}</div>
+        <div class="opts" role="radiogroup" aria-labelledby="qtext">
+          ${it.order.map((oi, di) => `
+            <button type="button" class="opt" role="radio" id="opt-${di}" data-d="${di}" aria-checked="${sel === di}">
+              <span class="key">${LETTERS[di]}</span><span class="txt">${esc(q.o[oi])}</span>
+            </button>`).join("")}
+        </div>
+        ${showConfirm ? `
+        <div class="confirm" role="alert">
+          <p><b>${unanswered} question${unanswered === 1 ? " is" : "s are"} still unanswered.</b> Unanswered questions count as wrong.</p>
+          <div class="row">
+            <button class="primary" id="finishAnyway" type="button">Finish and see score</button>
+            <button class="secondary" id="gotoFirst" type="button">Go to first unanswered</button>
+          </div>
+        </div>` : ""}
+        <div class="nav">
+          <button class="secondary" id="prevBtn" type="button" ${run.i === 0 ? "disabled" : ""}>Previous</button>
+          <div class="right">
+            ${last ? "" : `<button class="ghost" id="endBtn" type="button">Finish now</button>`}
+            <button class="primary" id="nextBtn" type="button">${last ? "Finish quiz" : sel === null ? "Skip" : "Next"}</button>
+          </div>
+        </div>
+        <span class="hint">Tip: press A–D or 1–4 to choose, Enter for next.</span>
+      </article>
+      <div><button class="linkish" id="quitBtn" type="button">Quit to start screen</button></div>`;
+
+    app.querySelectorAll(".opt").forEach(b => b.onclick = () => choose(Number(b.dataset.d)));
+    document.getElementById("prevBtn").onclick = () => go(run.i - 1);
+    document.getElementById("nextBtn").onclick = next;
+    const endBtn = document.getElementById("endBtn");
+    if (endBtn) endBtn.onclick = tryFinish;
+    document.getElementById("quitBtn").onclick = () => { save(); renderStart(); };
+    if (showConfirm) {
+      document.getElementById("finishAnyway").onclick = finish;
+      document.getElementById("gotoFirst").onclick = () => go(run.answers.findIndex(a => a === null));
+    }
+  }
+  function choose(d) {
+    run.answers[run.i] = d; save();
+    // Update in place so focus stays put
+    app.querySelectorAll(".opt").forEach(b => b.setAttribute("aria-checked", String(Number(b.dataset.d) === d)));
+    const nb = document.getElementById("nextBtn");
+    if (nb && nb.textContent === "Skip") nb.textContent = "Next";
+    const answered = run.answers.filter(a => a !== null).length;
+    app.querySelector(".bar i").style.width = (answered / run.items.length) * 100 + "%";
+    app.querySelector(".progress-meta span:last-child").textContent = answered + " answered";
+  }
+  function go(i) { if (i < 0 || i >= run.items.length) return; run.i = i; save(); renderQuestion(); window.scrollTo({ top: 0 }); }
+  function next() { if (run.i === run.items.length - 1) tryFinish(); else go(run.i + 1); }
+  function tryFinish() {
+    if (run.answers.some(a => a === null)) { renderQuestion(true); document.querySelector(".confirm").scrollIntoView({ block: "center" }); }
+    else finish();
+  }
+
+  // ---------- Results ----------
+  function finish() {
+    run.done = true; save();
+    renderResults("wrong");
+    window.scrollTo({ top: 0 });
+  }
+  function grade() {
+    return run.items.map((it, k) => {
+      const q = QUESTIONS[it.id];
+      const d = run.answers[k];
+      const correctD = it.order.indexOf(q.a);
+      return { k, q, it, d, correctD, ok: d === correctD, skipped: d === null };
+    });
+  }
+  function renderResults(tab) {
+    const g = grade();
+    const total = g.length;
+    const correct = g.filter(x => x.ok).length;
+    const skipped = g.filter(x => x.skipped).length;
+    const wrong = total - correct - skipped;
+    const pct = total ? (correct / total) * 100 : 0;
+    const score = Math.round(pct * 10) / 10;
+    const C = 2 * Math.PI * 64;
+    const verdict = pct >= 90 ? "Excellent work" : pct >= 75 ? "Well done" : pct >= 50 ? "Good effort, keep going" : "Keep practising";
+    const misses = g.filter(x => !x.ok);
+    const shown = tab === "all" ? g : misses;
+
+    app.innerHTML = `
+      <section class="card">
+        <div class="score">
+          <div class="ring" aria-label="Score ${score} out of 100">
+            <svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="64" fill="none" stroke="var(--line)" stroke-width="12"/>
+              <circle cx="75" cy="75" r="64" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round"
+                stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct / 100)}"/></svg>
+            <div class="val"><div><b>${score}</b><small>out of 100</small></div></div>
+          </div>
+          <div class="verdict">
+            <span class="eyebrow">Your result</span>
+            <h2>${verdict}</h2>
+            <p>You got <b>${correct}</b> correct out of <b>${total}</b> questions.</p>
+          </div>
+        </div>
+        <div class="tally">
+          <div class="tile good"><b>${correct}</b><span>Correct</span></div>
+          <div class="tile bad"><b>${wrong}</b><span>Wrong</span></div>
+          <div class="tile"><b>${skipped}</b><span>Skipped</span></div>
+        </div>
+        <div class="actions">
+          ${misses.length ? `<button class="primary" id="retryWrong" type="button">Retry my ${misses.length} mistake${misses.length === 1 ? "" : "s"}</button>` : ""}
+          <button class="secondary" id="again" type="button">New shuffled attempt</button>
+          <button class="secondary" id="settingsBtn" type="button">Change settings</button>
+        </div>
+      </section>
+      <section class="review-wrap" style="display:flex;flex-direction:column;gap:14px">
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" id="tab-wrong" aria-selected="${tab !== "all"}" type="button">Wrong answers (${misses.length})</button>
+          <button class="tab" role="tab" id="tab-all" aria-selected="${tab === "all"}" type="button">All questions (${total})</button>
+        </div>
+        <div class="review">
+          ${shown.length ? shown.map(x => `
+            <div class="ritem ${x.ok ? "ok" : ""}">
+              <div class="meta"><span>Q${x.k + 1}</span><span>·</span><span>${WEEK_LABEL(x.q.w)}</span><span>·</span><span>${x.ok ? "Correct" : x.skipped ? "Skipped" : "Wrong"}</span></div>
+              <div class="rq">${esc(x.q.q)}</div>
+              <div class="ropts">
+                ${x.it.order.map((oi, di) => {
+                  const cls = di === x.correctD ? "right" : di === x.d ? "wrong" : "";
+                  const tag = di === x.correctD ? (di === x.d ? "Your answer · Correct" : "Correct answer") : di === x.d ? "Your answer" : "";
+                  return `<div class="ropt ${cls}"><span class="key">${LETTERS[di]}</span><span class="txt">${esc(x.q.o[oi])}</span>${tag ? `<span class="rtag">${tag}</span>` : ""}</div>`;
+                }).join("")}
+              </div>
+              ${x.skipped ? `<div class="ans skip"><span class="lbl">Skipped</span><span>You did not answer this question.</span></div>` : ""}
+            </div>`).join("")
+          : `<div class="empty">No wrong answers. Every question was correct.</div>`}
+        </div>
+      </section>`;
+
+    document.getElementById("tab-wrong").onclick = () => renderResults("wrong");
+    document.getElementById("tab-all").onclick = () => renderResults("all");
+    const rw = document.getElementById("retryWrong");
+    if (rw) rw.onclick = () => {
+      const ids = misses.map(x => x.it.id);
+      const prevCount = settings.count; settings.count = "all";
+      buildRun(ids); settings.count = prevCount; save();
+      renderQuestion(); window.scrollTo({ top: 0 });
+    };
+    document.getElementById("again").onclick = () => {
+      const ids = QUESTIONS.map((q, id) => id).filter(id => settings.weeks.includes(QUESTIONS[id].w));
+      buildRun(ids); renderQuestion(); window.scrollTo({ top: 0 });
+    };
+    document.getElementById("settingsBtn").onclick = () => { store.clear(); renderStart(); };
+  }
+
+  // Keyboard shortcuts on the question screen
+  document.addEventListener("keydown", e => {
+    if (!run || run.done || !app.querySelector(".opts")) return;
+    if (e.target.matches && e.target.matches("input, textarea")) return;
+    const k = e.key.toUpperCase();
+    const n = run.items[run.i].order.length;
+    let d = LETTERS.indexOf(k);
+    if (d < 0 && /^[1-9]$/.test(k)) d = Number(k) - 1;
+    if (d >= 0 && d < n && !e.metaKey && !e.ctrlKey) { e.preventDefault(); choose(d); return; }
+    if (e.key === "Enter" && !(e.target.closest && e.target.closest("button"))) { e.preventDefault(); next(); }
+    if (e.key === "ArrowRight" && !e.target.closest("button")) next();
+    if (e.key === "ArrowLeft" && !e.target.closest("button")) go(run.i - 1);
+  });
+
+  // Boot: show results if the last saved run was finished, else the start screen
+  const saved = store.get();
+  if (saved && saved.settings) settings = Object.assign(settings, saved.settings, { weeks: (saved.settings.weeks || WEEKS).filter(w => WEEKS.includes(w)) });
+  if (saved && saved.run && saved.run.done) { run = saved.run; renderResults("wrong"); }
+  else renderStart();
+})();
+</script>
+
+</body>
+</html>
