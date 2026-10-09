@@ -6,7 +6,7 @@ A practice website for the NPTEL **Psychology of Learning** (IIT Kharagpur) assi
 
 ## Features
 
-- 123 questions, shown one at a time
+- 130 questions (10 per week), shown one at a time
 - Questions and answer options shuffled on every attempt (can be turned off)
 - Pick which weeks to include and how many questions (10, 25, 50 or all)
 - Score out of 100, plus correct / wrong / skipped counts
@@ -32,7 +32,7 @@ A practice website for the NPTEL **Psychology of Learning** (IIT Kharagpur) assi
 
 ## Notes
 
-- Week 12 contains only 3 questions, taken from a screenshot.
+- Week 12 answers are taken from the submitted assignment screenshots.
 - Week 6 Q7: the source PDF marks the letter "a" but gives the answer text "all of the given"; the quiz uses "all of the given".
 
 ---

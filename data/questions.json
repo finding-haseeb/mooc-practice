@@ -1333,5 +1333,80 @@
    "all of the given"
   ],
   "a": 3
+ },
+ {
+  "w": 12,
+  "q": "Which of the following does not come under social sustainability?",
+  "o": [
+   "Labour practices",
+   "Revenue generation",
+   "Human rights",
+   "Business ethics"
+  ],
+  "a": 1
+ },
+ {
+  "w": 12,
+  "q": "SDG ___ focuses on clean water and sanitation.",
+  "o": [
+   "1",
+   "17",
+   "6",
+   "3"
+  ],
+  "a": 2
+ },
+ {
+  "w": 12,
+  "q": "SDG 16 focuses on ___.",
+  "o": [
+   "No poverty",
+   "No hunger",
+   "Good health",
+   "Peace and justice"
+  ],
+  "a": 3
+ },
+ {
+  "w": 12,
+  "q": "On 20 October 2020, the Higher Education Sustainability Initiative (HESI) raised the flag of higher education as a driver for sustainable development and inclusive societies on the first day of the ___ 2020.",
+  "o": [
+   "National Sustainability Meeting",
+   "National Teachers Meeting",
+   "Global Childrens’ Meeting",
+   "Global Education Meeting"
+  ],
+  "a": 3
+ },
+ {
+  "w": 12,
+  "q": "Education is related to all SDGs.",
+  "o": [
+   "True",
+   "False"
+  ],
+  "a": 0
+ },
+ {
+  "w": 12,
+  "q": "Successful implementation of ESD requires a shift in focus from ___.",
+  "o": [
+   "teaching to learning",
+   "learning to teaching",
+   "reading to speaking",
+   "knowing to ignoring"
+  ],
+  "a": 0
+ },
+ {
+  "w": 12,
+  "q": "___ competency is the ability to reflect on one’s own role in the local community and (global) society.",
+  "o": [
+   "collaboration",
+   "self-awareness",
+   "strategic",
+   "normative"
+  ],
+  "a": 1
  }
 ]
