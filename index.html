@@ -16,10 +16,10 @@
   --ink: #f5ede6;
   --muted: #a8988c;
   --line: #2e2620;
-  --accent: #ff7a1a;
+  --accent: #ff9d52;
   --accent-ink: #1a0a00;
-  --accent-soft: #3a1e0c;
-  --mark: #ff7a1a;
+  --accent-soft: #3d2410;
+  --mark: #ff9d52;
   --mark-soft: #2a170b;
   --good: #4ade80;
   --good-soft: #0f2a1a;
@@ -30,6 +30,14 @@
   --f-mono: "Roboto Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --r: 14px;
   color-scheme: dark;
+}
+/* Light mode (orange on warm white), switched on with the header button */
+:root[data-theme="light"] {
+  --bg: #f7f1ec; --surface: #fffcf9; --ink: #2b1d14; --muted: #76655a; --line: #ead9cc;
+  --accent: #f28a3f; --accent-ink: #2b1306; --accent-soft: #fde6d4;
+  --mark: #f28a3f; --mark-soft: #fff1e6;
+  --good: #1d7a3e; --good-soft: #dcf0e2; --bad: #c62828; --bad-soft: #fbe3e3;
+  color-scheme: light;
 }
 * { box-sizing: border-box; }
 html, body { background: var(--bg); }
@@ -167,6 +175,7 @@ footer .credit b { font-family: var(--f-mono); color: var(--accent); font-weight
 <div class="wrap">
   <header class="top">
     <div class="brand"><span class="dot">PL</span>Psychology of Learning</div>
+    <button class="ghost" id="themeBtn" type="button">Light mode</button>
   </header>
 
   <main id="app"></main>
@@ -182,6 +191,8 @@ const QUESTIONS = [{"w": 0, "q": "What is Psychology?", "o": ["Just a social med
 </script>
 <script>
 (function () {
+  if (window.__polQuizStarted) return;
+  window.__polQuizStarted = true;
   const WEEK_LABEL = w => "Week " + w;
   const LETTERS = ["A", "B", "C", "D", "E", "F"];
   const STORE_KEY = "pol-quiz-v1";
@@ -192,6 +203,20 @@ const QUESTIONS = [{"w": 0, "q": "What is Psychology?", "o": ["Just a social med
     set(v) { try { localStorage.setItem(STORE_KEY, JSON.stringify(v)); } catch (e) {} },
     clear() { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
   };
+
+  // Theme toggle: black (dark) by default, light on request
+  const themeBtn = document.getElementById("themeBtn");
+  const root = document.documentElement;
+  const isLight = () => root.getAttribute("data-theme") === "light";
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    themeBtn.textContent = t === "light" ? "Dark mode" : "Light mode";
+    try { localStorage.setItem("pol-theme", t); } catch (e) {}
+  }
+  themeBtn.onclick = () => setTheme(isLight() ? "dark" : "light");
+  let savedTheme = "dark";
+  try { savedTheme = localStorage.getItem("pol-theme") || "dark"; } catch (e) {}
+  setTheme(savedTheme === "light" ? "light" : "dark");
 
   const WEEKS = [...new Set(QUESTIONS.map(q => q.w))].sort((a, b) => a - b);
   const perWeek = w => QUESTIONS.filter(q => q.w === w).length;
