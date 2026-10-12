@@ -45,7 +45,8 @@ button:focus-visible, label:focus-within { outline: 3px solid var(--mark); outli
 
 /* header */
 .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
-.brand { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; background: none; border: 0; padding: 4px 6px 4px 0; border-radius: 8px; color: var(--ink); text-align: left; }
+.brand:hover { color: var(--accent); }
 .brand .dot { width: 26px; height: 26px; border-radius: 7px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-size: .8rem; font-family: var(--f-mono); }
 .ghost { background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: .88rem; color: var(--muted); }
 .ghost:hover { color: var(--ink); border-color: var(--muted); }
@@ -165,7 +166,7 @@ footer .credit b { font-family: var(--f-mono); color: var(--accent); font-weight
 
 <div class="wrap">
   <header class="top">
-    <div class="brand"><span class="dot">PL</span>Psychology of Learning</div>
+    <button class="brand" id="homeBtn" type="button" aria-label="Go to the start page"><span class="dot">PL</span>Psychology of Learning</button>
     <button class="ghost" id="themeBtn" type="button">Light mode</button>
   </header>
 
@@ -488,6 +489,15 @@ footer .credit b { font-family: var(--f-mono); color: var(--accent); font-weight
     };
     document.getElementById("settingsBtn").onclick = () => { store.clear(); renderStart(); };
   }
+
+  // Logo goes to the start page (an unfinished quiz is saved and can be resumed)
+  document.getElementById("homeBtn").onclick = () => {
+    if (run && !run.done) save();
+    else store.clear();
+    run = null;
+    renderStart();
+    window.scrollTo({ top: 0 });
+  };
 
   // Keyboard shortcuts on the question screen
   document.addEventListener("keydown", e => {
