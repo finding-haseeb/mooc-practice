@@ -7,7 +7,7 @@ A practice website for NPTEL weekly assignment MCQs. Subjects:
 
 Direct links: add `#psychology_of_learning` or `#introduction_to_internet_of_things` to the site address.
 
-**Live site:** https://finding-haseeb.github.io/psychology-of-learning-quiz/
+**Live site:** https://finding-haseeb.github.io/mooc-practice/
 
 ## Features
 
