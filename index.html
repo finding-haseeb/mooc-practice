@@ -9,41 +9,26 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;700&display=swap">
 <style>
-/* Layout: one centred exam column (max 720px); a quiet header strip, one question card at a time, score sheet at the end. */
+/* Single black theme with orange accent. Layout: one centred exam column (max 720px); a quiet header strip, one question card at a time, score sheet at the end. */
 :root {
-  --bg: #f7f1ec;
-  --surface: #fffcf9;
-  --ink: #2b1d14;
-  --muted: #76655a;
-  --line: #ead9cc;
-  --accent: #d9480f;
-  --accent-ink: #ffffff;
-  --accent-soft: #fde3d2;
-  --mark: #d9480f;
-  --mark-soft: #fff0e6;
-  --good: #1d7a3e;
-  --good-soft: #dcf0e2;
-  --bad: #c62828;
-  --bad-soft: #fbe3e3;
+  --bg: #000000;
+  --surface: #141110;
+  --ink: #f5ede6;
+  --muted: #a8988c;
+  --line: #2e2620;
+  --accent: #ff7a1a;
+  --accent-ink: #1a0a00;
+  --accent-soft: #3a1e0c;
+  --mark: #ff7a1a;
+  --mark-soft: #2a170b;
+  --good: #4ade80;
+  --good-soft: #0f2a1a;
+  --bad: #ff5c5c;
+  --bad-soft: #3a1414;
   --f-display: "Roboto", "Segoe UI", Arial, system-ui, sans-serif;
   --f-body: "Open Sans", "Segoe UI", Arial, system-ui, sans-serif;
   --f-mono: "Roboto Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --r: 14px;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #17110d; --surface: #221a14; --ink: #f4e9e0; --muted: #b29e90; --line: #3d2f25;
-    --accent: #ff8a3d; --accent-ink: #2a1206; --accent-soft: #4a2614;
-    --mark: #ff8a3d; --mark-soft: #3a2214;
-    --good: #5fd08a; --good-soft: #163423; --bad: #ff6b6b; --bad-soft: #401b1b;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #17110d; --surface: #221a14; --ink: #f4e9e0; --muted: #b29e90; --line: #3d2f25;
-  --accent: #ff8a3d; --accent-ink: #2a1206; --accent-soft: #4a2614;
-  --mark: #ff8a3d; --mark-soft: #3a2214;
-  --good: #5fd08a; --good-soft: #163423; --bad: #ff6b6b; --bad-soft: #401b1b;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -182,7 +167,6 @@ footer .credit b { font-family: var(--f-mono); color: var(--accent); font-weight
 <div class="wrap">
   <header class="top">
     <div class="brand"><span class="dot">PL</span>Psychology of Learning</div>
-    <button class="ghost" id="themeBtn" type="button">Dark mode</button>
   </header>
 
   <main id="app"></main>
@@ -208,22 +192,6 @@ const QUESTIONS = [{"w": 0, "q": "What is Psychology?", "o": ["Just a social med
     set(v) { try { localStorage.setItem(STORE_KEY, JSON.stringify(v)); } catch (e) {} },
     clear() { try { localStorage.removeItem(STORE_KEY); } catch (e) {} }
   };
-
-  // Theme toggle
-  const themeBtn = document.getElementById("themeBtn");
-  function isDark() {
-    const t = document.documentElement.getAttribute("data-theme");
-    if (t) return t === "dark";
-    return window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-  function syncThemeBtn() { themeBtn.textContent = isDark() ? "Light mode" : "Dark mode"; }
-  themeBtn.addEventListener("click", () => {
-    document.documentElement.setAttribute("data-theme", isDark() ? "light" : "dark");
-    syncThemeBtn();
-    try { localStorage.setItem("pol-theme", document.documentElement.getAttribute("data-theme")); } catch (e) {}
-  });
-  try { const t = localStorage.getItem("pol-theme"); if (t) document.documentElement.setAttribute("data-theme", t); } catch (e) {}
-  syncThemeBtn();
 
   const WEEKS = [...new Set(QUESTIONS.map(q => q.w))].sort((a, b) => a - b);
   const perWeek = w => QUESTIONS.filter(q => q.w === w).length;

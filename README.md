@@ -13,7 +13,7 @@ A practice website for the NPTEL **Psychology of Learning** (IIT Kharagpur) assi
 - Review of wrong answers showing every option: your wrong choice in red, the correct answer in green
 - "Retry my mistakes" to practise only the questions you got wrong
 - Progress saved in the browser, so you can close the page and resume
-- Works on phones, tablets and computers, with light and dark mode
+- Works on phones, tablets and computers; black theme with orange highlights
 
 ## Project layout
 
