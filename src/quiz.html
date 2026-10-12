@@ -5,20 +5,20 @@
 <style>
 /* Layout: one centred exam column (max 720px); a quiet header strip, one question card at a time, score sheet at the end. */
 :root {
-  --bg: #eaf0ee;
-  --surface: #f9fbfa;
-  --ink: #17262a;
-  --muted: #56686b;
-  --line: #c9d6d3;
-  --accent: #0d6b63;
+  --bg: #f7f1ec;
+  --surface: #fffcf9;
+  --ink: #2b1d14;
+  --muted: #76655a;
+  --line: #ead9cc;
+  --accent: #d9480f;
   --accent-ink: #ffffff;
-  --accent-soft: #d3e9e5;
-  --mark: #e6a92e;
-  --mark-soft: #fbefd2;
+  --accent-soft: #fde3d2;
+  --mark: #d9480f;
+  --mark-soft: #fff0e6;
   --good: #1d7a3e;
   --good-soft: #dcf0e2;
-  --bad: #b3372a;
-  --bad-soft: #f7e0dc;
+  --bad: #c62828;
+  --bad-soft: #fbe3e3;
   --f-display: "Roboto", "Segoe UI", Arial, system-ui, sans-serif;
   --f-body: "Open Sans", "Segoe UI", Arial, system-ui, sans-serif;
   --f-mono: "Roboto Mono", ui-monospace, "SF Mono", Menlo, monospace;
@@ -26,18 +26,18 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0f1719; --surface: #172225; --ink: #e4eeec; --muted: #93a7a9; --line: #2b3b3e;
-    --accent: #4fc1b5; --accent-ink: #062321; --accent-soft: #173a37;
-    --mark: #f0bb4f; --mark-soft: #3a2f17;
-    --good: #5fd08a; --good-soft: #163423; --bad: #f08a7c; --bad-soft: #3d1d19;
+    --bg: #17110d; --surface: #221a14; --ink: #f4e9e0; --muted: #b29e90; --line: #3d2f25;
+    --accent: #ff8a3d; --accent-ink: #2a1206; --accent-soft: #4a2614;
+    --mark: #ff8a3d; --mark-soft: #3a2214;
+    --good: #5fd08a; --good-soft: #163423; --bad: #ff6b6b; --bad-soft: #401b1b;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0f1719; --surface: #172225; --ink: #e4eeec; --muted: #93a7a9; --line: #2b3b3e;
-  --accent: #4fc1b5; --accent-ink: #062321; --accent-soft: #173a37;
-  --mark: #f0bb4f; --mark-soft: #3a2f17;
-  --good: #5fd08a; --good-soft: #163423; --bad: #f08a7c; --bad-soft: #3d1d19;
+  --bg: #17110d; --surface: #221a14; --ink: #f4e9e0; --muted: #b29e90; --line: #3d2f25;
+  --accent: #ff8a3d; --accent-ink: #2a1206; --accent-soft: #4a2614;
+  --mark: #ff8a3d; --mark-soft: #3a2214;
+  --good: #5fd08a; --good-soft: #163423; --bad: #ff6b6b; --bad-soft: #401b1b;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -106,7 +106,7 @@ button:focus-visible, label:focus-within { outline: 3px solid var(--mark); outli
 .opt .key { flex: none; width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; font-family: var(--f-mono); font-weight: 700; font-size: .9rem; border: 1.5px solid var(--line); background: var(--surface); }
 .opt .txt { min-width: 0; overflow-wrap: anywhere; }
 .opt[aria-checked="true"] { border-color: var(--mark); background: var(--mark-soft); }
-.opt[aria-checked="true"] .key { background: var(--mark); border-color: var(--mark); color: #1d1503; }
+.opt[aria-checked="true"] .key { background: var(--mark); border-color: var(--mark); color: var(--accent-ink); }
 .nav { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .nav .right { display: flex; gap: 10px; margin-left: auto; }
 .hint { font-size: .8rem; color: var(--muted); }
