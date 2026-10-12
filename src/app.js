@@ -1,0 +1,499 @@
+(function () {
+  if (window.__polQuizStarted) return;
+  window.__polQuizStarted = true;
+  const WEEK_LABEL = w => "Week " + w;
+  const LETTERS = ["A", "B", "C", "D", "E", "F"];
+  const app = document.getElementById("app");
+
+  // ---------- Browser storage (all optional; the quiz works without it) ----------
+  function readJSON(key, fallback) { try { const v = JSON.parse(localStorage.getItem(key) || "null"); return v == null ? fallback : v; } catch (e) { return fallback; } }
+  function writeJSON(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
+  function removeKey(key) { try { localStorage.removeItem(key); } catch (e) {} }
+  const STORE_KEY = "pol-quiz-v1";
+  const store = { get: () => readJSON(STORE_KEY, null), set: v => writeJSON(STORE_KEY, v), clear: () => removeKey(STORE_KEY) };
+
+  // Per-question stats { [id]: {c: correct, w: wrong} }, attempt history, bookmarks
+  let stats = readJSON("pol-stats", {});
+  let history = readJSON("pol-history", []);
+  let bookmarks = new Set(readJSON("pol-bookmarks", []));
+  const saveStats = () => writeJSON("pol-stats", stats);
+  const saveHistory = () => writeJSON("pol-history", history);
+  const saveBookmarks = () => writeJSON("pol-bookmarks", [...bookmarks]);
+
+  // ---------- Theme toggle: black (dark) by default ----------
+  const themeBtn = document.getElementById("themeBtn");
+  const root = document.documentElement;
+  const isLight = () => root.getAttribute("data-theme") === "light";
+  function setTheme(t) {
+    root.setAttribute("data-theme", t);
+    themeBtn.textContent = t === "light" ? "Dark mode" : "Light mode";
+    try { localStorage.setItem("pol-theme", t); } catch (e) {}
+  }
+  themeBtn.onclick = () => setTheme(isLight() ? "dark" : "light");
+  let savedTheme = "dark";
+  try { savedTheme = localStorage.getItem("pol-theme") || "dark"; } catch (e) {}
+  setTheme(savedTheme === "light" ? "light" : "dark");
+
+  // ---------- Instant answer switch ----------
+  const instantBtn = document.getElementById("instantBtn");
+  let instant = readJSON("pol-instant", false) === true;
+  function setInstant(on) {
+    instant = on;
+    instantBtn.setAttribute("aria-checked", String(on));
+    instantBtn.title = on ? "Instant answer is on: the answer and explanation show as soon as you tap an option" : "Instant answer is off: answers are shown at the end";
+    writeJSON("pol-instant", on);
+  }
+  instantBtn.onclick = () => {
+    setInstant(!instant);
+    if (run && !run.done && app.querySelector(".opts")) renderQuestion();
+  };
+  setInstant(instant);
+
+  const WEEKS = [...new Set(QUESTIONS.map(q => q.w))].sort((a, b) => a - b);
+  const perWeek = w => QUESTIONS.filter(q => q.w === w).length;
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const fmtTime = ms => { const t = Math.round((ms || 0) / 1000); const m = Math.floor(t / 60), s = t % 60; return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0"); };
+  const BM_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>';
+
+  function weakIds() {
+    return QUESTIONS.map((q, id) => id).filter(id => {
+      const s = stats[id]; if (!s || !s.w) return false;
+      return s.c / (s.c + s.w) < 0.6;
+    });
+  }
+
+  // ---------- State ----------
+  let settings = { weeks: WEEKS.slice(), count: "all", shuffleQ: true, shuffleO: true };
+  let run = null; // { items:[{id, order}], answers:[displayIdx|null], locked:[bool], i, done, elapsed, label }
+
+  function buildRun(ids, opts) {
+    opts = opts || {};
+    let list = ids.slice();
+    if (settings.shuffleQ) list = shuffle(list);
+    const count = opts.all ? "all" : settings.count;
+    if (count !== "all") list = list.slice(0, Number(count));
+    const items = list.map(id => {
+      const n = QUESTIONS[id].o.length;
+      const base = [...Array(n).keys()];
+      const isTF = n === 2 && /^true$/i.test(QUESTIONS[id].o[0]);
+      return { id, order: settings.shuffleO && !isTF ? shuffle(base) : base };
+    });
+    run = { items, answers: items.map(() => null), locked: items.map(() => false), i: 0, done: false, elapsed: 0, label: opts.label || "Practice" };
+    save();
+  }
+  function save() { store.set({ settings, run }); }
+
+  // ---------- Timer (counts only while a question is on screen) ----------
+  let lastTick = Date.now();
+  setInterval(() => {
+    const now = Date.now();
+    const dt = now - lastTick; lastTick = now;
+    if (!run || run.done || !app.querySelector(".opts") || document.hidden) return;
+    run.elapsed = (run.elapsed || 0) + Math.min(dt, 5000);
+    const el = document.getElementById("timer");
+    if (el) el.textContent = fmtTime(run.elapsed);
+    if (Math.floor(run.elapsed / 1000) % 5 === 0) save();
+  }, 1000);
+
+  // ---------- Start screen ----------
+  function renderStart() {
+    const saved = store.get();
+    const canResume = saved && saved.run && !saved.run.done && saved.run.items && saved.run.items.length;
+    const answeredSaved = canResume ? saved.run.answers.filter(a => a !== null).length : 0;
+    const seen = Object.keys(stats).filter(id => QUESTIONS[id]).length;
+    let c = 0, w = 0; Object.values(stats).forEach(s => { c += s.c || 0; w += s.w || 0; });
+    const acc = c + w ? Math.round((c / (c + w)) * 100) : 0;
+    const best = history.length ? Math.max(...history.map(h => h.score)) : 0;
+    const weak = weakIds();
+    const bms = [...bookmarks].filter(id => QUESTIONS[id]);
+
+    app.innerHTML = `
+      <section class="hero">
+        <span class="eyebrow">NPTEL assignment practice</span>
+        <h1>Test yourself on all <em>${QUESTIONS.length}</em> questions</h1>
+        <p>One question at a time, with a short explanation for every answer. Turn on <b>Instant answer</b> at the top to see the answer as soon as you tap, or leave it off and get your score out of 100 at the end.</p>
+        <div class="stats">
+          <span><b>${QUESTIONS.length}</b> questions</span>
+          <span><b>${WEEKS.length}</b> weeks</span>
+          <span><b>${QUESTIONS.filter(q => q.o.length === 2).length}</b> true/false</span>
+        </div>
+      </section>
+      ${canResume ? `
+      <div class="resume">
+        <p><b>You have a quiz in progress.</b> ${answeredSaved} of ${saved.run.items.length} answered.</p>
+        <div class="actions">
+          <button class="primary" id="resumeBtn" type="button">Resume</button>
+          <button class="secondary" id="discardBtn" type="button">Discard</button>
+        </div>
+      </div>` : ""}
+      <section class="stat4" aria-label="Your progress">
+        <div class="tile"><b>${seen}<small style="font-size:.7em;color:var(--muted)">/${QUESTIONS.length}</small></b><span>Questions seen</span></div>
+        <div class="tile"><b>${acc}%</b><span>Accuracy</span></div>
+        <div class="tile"><b>${history.length}</b><span>Quizzes taken</span></div>
+        <div class="tile"><b>${best}</b><span>Best score</span></div>
+      </section>
+      <section class="panel">
+        <div class="field">
+          <div class="field-head">
+            <h3>Weeks to include</h3>
+            <span><button class="linkish" id="allW" type="button">Select all</button> · <button class="linkish" id="noneW" type="button">Clear</button></span>
+          </div>
+          <div class="chips" id="weekChips">
+            ${WEEKS.map(w => `
+              <label class="chip"><input type="checkbox" id="wk-${w}" value="${w}" ${settings.weeks.includes(w) ? "checked" : ""}>
+              <span>${WEEK_LABEL(w)} <small>${perWeek(w)}</small></span></label>`).join("")}
+          </div>
+        </div>
+        <div class="field">
+          <div class="field-head"><h3>How many questions</h3></div>
+          <div class="chips count-row" id="countChips">
+            ${["10", "25", "50", "all"].map(c => `
+              <label class="chip"><input type="radio" name="count" id="cnt-${c}" value="${c}" ${settings.count === c ? "checked" : ""}>
+              <span>${c === "all" ? "All selected" : c}</span></label>`).join("")}
+          </div>
+        </div>
+        <div class="toggles">
+          <label class="toggle"><input type="checkbox" id="shQ" ${settings.shuffleQ ? "checked" : ""}>
+            <div><b>Shuffle questions</b><span>New random order every attempt</span></div></label>
+          <label class="toggle"><input type="checkbox" id="shO" ${settings.shuffleO ? "checked" : ""}>
+            <div><b>Shuffle options</b><span>A, B, C, D appear in a new order</span></div></label>
+        </div>
+        <div class="field">
+          <button class="primary" id="startBtn" type="button"></button>
+          <p class="note">Your progress, bookmarks and history are saved in this browser only.</p>
+        </div>
+      </section>
+      <section class="panel">
+        <h3 class="section-title">Revision</h3>
+        <div class="rev">
+          <div class="revcard">
+            <h4>Weak questions <b>${weak.length}</b></h4>
+            <p>Questions you get wrong more often than right (under 60% correct).</p>
+            <button class="secondary" id="weakBtn" type="button" ${weak.length ? "" : "disabled"}>${weak.length ? "Practise weak questions" : "Nothing to drill yet"}</button>
+          </div>
+          <div class="revcard">
+            <h4>Bookmarked <b>${bms.length}</b></h4>
+            <p>Tap the Save button on any question during a quiz to keep it here.</p>
+            <button class="secondary" id="bmBtn" type="button" ${bms.length ? "" : "disabled"}>${bms.length ? "Practise bookmarks" : "No bookmarks yet"}</button>
+          </div>
+        </div>
+      </section>
+      ${history.length ? `
+      <section class="panel">
+        <div class="field-head"><h3 class="section-title">Recent quizzes</h3><button class="linkish danger" id="resetBtn" type="button">Reset my progress</button></div>
+        <div id="resetConfirm" hidden class="confirm"><p><b>Delete your stats, history and bookmarks?</b> This can't be undone.</p>
+          <div class="row"><button class="primary" id="resetYes" type="button">Yes, reset</button><button class="secondary" id="resetNo" type="button">Cancel</button></div></div>
+        <div class="hist">
+          ${history.slice(0, 8).map(h => `
+            <div class="hrow"><span class="when">${esc(h.label || "Practice")} · ${new Date(h.at).toLocaleDateString(undefined, { day: "numeric", month: "short" })}, ${new Date(h.at).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}</span>
+            <span>${h.correct}/${h.total} · ${fmtTime(h.ms)}</span><b>${h.score}</b></div>`).join("")}
+        </div>
+      </section>` : ""}`;
+
+    const startBtn = document.getElementById("startBtn");
+    function readSettings() {
+      settings.weeks = [...app.querySelectorAll("#weekChips input:checked")].map(i => Number(i.value));
+      settings.count = (app.querySelector("#countChips input:checked") || {}).value || "all";
+      settings.shuffleQ = document.getElementById("shQ").checked;
+      settings.shuffleO = document.getElementById("shO").checked;
+      const pool = QUESTIONS.filter(q => settings.weeks.includes(q.w)).length;
+      const n = settings.count === "all" ? pool : Math.min(pool, Number(settings.count));
+      startBtn.textContent = pool ? `Start quiz · ${n} question${n === 1 ? "" : "s"}` : "Pick at least one week";
+      startBtn.disabled = !pool;
+    }
+    app.querySelector(".panel:not(.stat4)").addEventListener("change", readSettings);
+    document.getElementById("allW").onclick = () => { app.querySelectorAll("#weekChips input").forEach(i => i.checked = true); readSettings(); };
+    document.getElementById("noneW").onclick = () => { app.querySelectorAll("#weekChips input").forEach(i => i.checked = false); readSettings(); };
+    startBtn.onclick = () => {
+      readSettings();
+      const ids = QUESTIONS.map((q, id) => id).filter(id => settings.weeks.includes(QUESTIONS[id].w));
+      const label = settings.weeks.length === WEEKS.length ? "All weeks" : settings.weeks.length === 1 ? WEEK_LABEL(settings.weeks[0]) : settings.weeks.length + " weeks";
+      buildRun(ids, { label });
+      renderQuestion();
+    };
+    document.getElementById("weakBtn").onclick = () => { buildRun(weakIds(), { all: true, label: "Weak questions" }); renderQuestion(); };
+    document.getElementById("bmBtn").onclick = () => { buildRun([...bookmarks].filter(id => QUESTIONS[id]), { all: true, label: "Bookmarks" }); renderQuestion(); };
+    if (canResume) {
+      document.getElementById("resumeBtn").onclick = () => { settings = saved.settings || settings; run = saved.run; run.locked = run.locked || run.items.map(() => false); renderQuestion(); };
+      document.getElementById("discardBtn").onclick = () => { store.clear(); renderStart(); };
+    }
+    const resetBtn = document.getElementById("resetBtn");
+    if (resetBtn) {
+      const box = document.getElementById("resetConfirm");
+      resetBtn.onclick = () => { box.hidden = false; };
+      document.getElementById("resetNo").onclick = () => { box.hidden = true; };
+      document.getElementById("resetYes").onclick = () => {
+        stats = {}; history = []; bookmarks = new Set();
+        saveStats(); saveHistory(); saveBookmarks(); renderStart();
+      };
+    }
+    readSettings();
+  }
+
+  // ---------- Question screen ----------
+  function correctCount() {
+    return run.items.reduce((n, it, k) => n + (run.answers[k] !== null && it.order[run.answers[k]] === QUESTIONS[it.id].a ? 1 : 0), 0);
+  }
+  function feedbackHTML(q, it, d) {
+    const correctD = it.order.indexOf(q.a);
+    const ok = d === correctD;
+    const chosen = it.order[d];
+    return `
+      <div class="fb ${ok ? "ok" : ""}" role="status">
+        <span class="fb-title">${ok ? "Correct" : "Incorrect"}</span>
+        ${ok ? "" : `<p><span class="pill">Correct answer: ${LETTERS[correctD]}</span>${esc(q.o[q.a])}</p>`}
+        <p><b>Why:</b> ${esc(q.why || "")}</p>
+        ${ok || !q.x || !q.x[chosen] ? "" : `<p><b>Why ${LETTERS[d]} is wrong:</b> ${esc(q.x[chosen])}</p>`}
+      </div>`;
+  }
+  function renderQuestion(showConfirm) {
+    const total = run.items.length;
+    const it = run.items[run.i];
+    const q = QUESTIONS[it.id];
+    const sel = run.answers[run.i];
+    if (instant && sel !== null) run.locked[run.i] = true;
+    const reveal = sel !== null && run.locked[run.i];
+    const correctD = it.order.indexOf(q.a);
+    const answered = run.answers.filter(a => a !== null).length;
+    const last = run.i === total - 1;
+    const unanswered = total - answered;
+    const marked = bookmarks.has(it.id);
+
+    app.innerHTML = `
+      <section class="progress" aria-label="Progress">
+        <div class="progress-meta"><span class="mono">${esc(run.label || "Practice")} · Q ${run.i + 1}/${total}</span><span class="mono">Time <span id="timer">${fmtTime(run.elapsed)}</span></span></div>
+        <div class="bar"><i style="width:${(answered / total) * 100}%"></i></div>
+      </section>
+      <article class="card">
+        <div class="qhead">
+          <div class="qmeta"><span class="tag">${WEEK_LABEL(q.w)}</span>
+            <button class="bm" id="bmToggle" type="button" aria-pressed="${marked}">${BM_ICON}${marked ? "Saved" : "Save"}</button></div>
+          ${instant ? `<span class="score-so-far">${correctCount()} correct so far</span>` : `<span class="qnum mono">${String(run.i + 1).padStart(2, "0")}</span>`}
+        </div>
+        <div class="qtext" id="qtext">${esc(q.q)}</div>
+        <div class="opts" role="radiogroup" aria-labelledby="qtext">
+          ${it.order.map((oi, di) => {
+            const cls = reveal ? (di === correctD ? "is-right" : di === sel ? "is-wrong" : "") : "";
+            const mark = reveal ? (di === correctD ? "Correct" : di === sel ? "Your answer" : "") : "";
+            return `
+            <button type="button" class="opt ${cls}" role="radio" id="opt-${di}" data-d="${di}" aria-checked="${sel === di}" ${reveal ? "disabled" : ""}>
+              <span class="key">${LETTERS[di]}</span><span class="txt">${esc(q.o[oi])}</span>${mark ? `<span class="mark">${mark}</span>` : ""}
+            </button>`;
+          }).join("")}
+        </div>
+        ${reveal ? feedbackHTML(q, it, sel) : ""}
+        ${showConfirm ? `
+        <div class="confirm" role="alert">
+          <p><b>${unanswered} question${unanswered === 1 ? " is" : "s are"} still unanswered.</b> Unanswered questions count as wrong.</p>
+          <div class="row">
+            <button class="primary" id="finishAnyway" type="button">Finish and see score</button>
+            <button class="secondary" id="gotoFirst" type="button">Go to first unanswered</button>
+          </div>
+        </div>` : ""}
+        <div class="nav">
+          <button class="secondary" id="prevBtn" type="button" ${run.i === 0 ? "disabled" : ""}>Previous</button>
+          <div class="right">
+            ${last ? "" : `<button class="ghost" id="endBtn" type="button">Finish now</button>`}
+            <button class="primary" id="nextBtn" type="button">${last ? "Finish quiz" : sel === null ? "Skip" : "Next"}</button>
+          </div>
+        </div>
+        <span class="hint">${instant ? "Instant answer is on: tap an option to see if it's right." : "Tip: press A–D or 1–4 to choose, Enter for next."}</span>
+      </article>
+      <div><button class="linkish" id="quitBtn" type="button">Quit to start screen</button></div>`;
+
+    app.querySelectorAll(".opt").forEach(b => b.onclick = () => choose(Number(b.dataset.d)));
+    document.getElementById("prevBtn").onclick = () => go(run.i - 1);
+    document.getElementById("nextBtn").onclick = next;
+    const endBtn = document.getElementById("endBtn");
+    if (endBtn) endBtn.onclick = tryFinish;
+    document.getElementById("quitBtn").onclick = () => { save(); renderStart(); };
+    document.getElementById("bmToggle").onclick = () => {
+      if (bookmarks.has(it.id)) bookmarks.delete(it.id); else bookmarks.add(it.id);
+      saveBookmarks();
+      const b = document.getElementById("bmToggle"), on = bookmarks.has(it.id);
+      b.setAttribute("aria-pressed", String(on)); b.innerHTML = BM_ICON + (on ? "Saved" : "Save");
+    };
+    if (showConfirm) {
+      document.getElementById("finishAnyway").onclick = finish;
+      document.getElementById("gotoFirst").onclick = () => go(run.answers.findIndex(a => a === null));
+    }
+  }
+  function choose(d) {
+    if (run.locked[run.i]) return;
+    run.answers[run.i] = d;
+    if (instant) {
+      run.locked[run.i] = true; save();
+      renderQuestion();
+      const fb = app.querySelector(".fb");
+      if (fb && fb.getBoundingClientRect().bottom > window.innerHeight) fb.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      return;
+    }
+    save();
+    app.querySelectorAll(".opt").forEach(b => b.setAttribute("aria-checked", String(Number(b.dataset.d) === d)));
+    const nb = document.getElementById("nextBtn");
+    if (nb && nb.textContent === "Skip") nb.textContent = "Next";
+    const answered = run.answers.filter(a => a !== null).length;
+    app.querySelector(".bar i").style.width = (answered / run.items.length) * 100 + "%";
+  }
+  function go(i) { if (i < 0 || i >= run.items.length) return; run.i = i; save(); renderQuestion(); window.scrollTo({ top: 0 }); }
+  function next() { if (run.i === run.items.length - 1) tryFinish(); else go(run.i + 1); }
+  function tryFinish() {
+    if (run.answers.some(a => a === null)) { renderQuestion(true); document.querySelector(".confirm").scrollIntoView({ block: "center" }); }
+    else finish();
+  }
+
+  // ---------- Results ----------
+  function finish() {
+    run.done = true;
+    if (!run.recorded) {
+      const g = grade();
+      g.forEach(x => {
+        if (x.skipped) return;
+        const s = stats[x.it.id] || (stats[x.it.id] = { c: 0, w: 0 });
+        if (x.ok) s.c++; else s.w++;
+      });
+      const correct = g.filter(x => x.ok).length;
+      history.unshift({ at: Date.now(), label: run.label || "Practice", correct, total: g.length, score: Math.round((correct / g.length) * 1000) / 10, ms: run.elapsed || 0 });
+      history = history.slice(0, 50);
+      saveStats(); saveHistory();
+      run.recorded = true;
+    }
+    save();
+    renderResults("wrong");
+    window.scrollTo({ top: 0 });
+  }
+  function grade() {
+    return run.items.map((it, k) => {
+      const q = QUESTIONS[it.id];
+      const d = run.answers[k];
+      const correctD = it.order.indexOf(q.a);
+      return { k, q, it, d, correctD, ok: d === correctD, skipped: d === null };
+    });
+  }
+  function whyHTML(x) {
+    const q = x.q;
+    const chosen = x.d === null ? null : x.it.order[x.d];
+    const others = x.it.order.map((oi, di) => ({ oi, di })).filter(o => o.oi !== q.a && o.oi !== chosen && q.x && q.x[o.oi]);
+    return `
+      <div class="why">
+        <p><span class="wl g">Why ${LETTERS[x.correctD]} is correct</span>${esc(q.why || "")}</p>
+        ${!x.ok && !x.skipped && q.x && q.x[chosen] ? `<p><span class="wl r">Why your answer ${LETTERS[x.d]} is wrong</span>${esc(q.x[chosen])}</p>` : ""}
+        ${others.length ? `<details><summary>Why the other options are wrong</summary><ul>${others.map(o => `<li><b>${LETTERS[o.di]}.</b> ${esc(q.x[o.oi])}</li>`).join("")}</ul></details>` : ""}
+      </div>`;
+  }
+  function renderResults(tab) {
+    const g = grade();
+    const total = g.length;
+    const correct = g.filter(x => x.ok).length;
+    const skipped = g.filter(x => x.skipped).length;
+    const wrong = total - correct - skipped;
+    const pct = total ? (correct / total) * 100 : 0;
+    const score = Math.round(pct * 10) / 10;
+    const C = 2 * Math.PI * 64;
+    const verdict = pct >= 90 ? "Excellent work" : pct >= 75 ? "Well done" : pct >= 50 ? "Good effort, keep going" : "Keep practising";
+    const misses = g.filter(x => !x.ok);
+    const shown = tab === "all" ? g : misses;
+
+    app.innerHTML = `
+      <section class="card">
+        <div class="score">
+          <div class="ring" aria-label="Score ${score} out of 100">
+            <svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="64" fill="none" stroke="var(--line)" stroke-width="12"/>
+              <circle cx="75" cy="75" r="64" fill="none" stroke="var(--accent)" stroke-width="12" stroke-linecap="round"
+                stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct / 100)}"/></svg>
+            <div class="val"><div><b>${score}</b><small>out of 100</small></div></div>
+          </div>
+          <div class="verdict">
+            <span class="eyebrow">${esc(run.label || "Your result")}</span>
+            <h2>${verdict}</h2>
+            <p>You got <b>${correct}</b> correct out of <b>${total}</b> questions in <b>${fmtTime(run.elapsed)}</b>.</p>
+          </div>
+        </div>
+        <div class="tally">
+          <div class="tile good"><b>${correct}</b><span>Correct</span></div>
+          <div class="tile bad"><b>${wrong}</b><span>Wrong</span></div>
+          <div class="tile"><b>${skipped}</b><span>Skipped</span></div>
+        </div>
+        <div class="actions">
+          ${misses.length ? `<button class="primary" id="retryWrong" type="button">Retry my ${misses.length} mistake${misses.length === 1 ? "" : "s"}</button>` : ""}
+          <button class="secondary" id="again" type="button">New shuffled attempt</button>
+          <button class="secondary" id="settingsBtn" type="button">Back to start</button>
+        </div>
+      </section>
+      <section class="review-wrap" style="display:flex;flex-direction:column;gap:14px">
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" id="tab-wrong" aria-selected="${tab !== "all"}" type="button">Wrong answers (${misses.length})</button>
+          <button class="tab" role="tab" id="tab-all" aria-selected="${tab === "all"}" type="button">All questions (${total})</button>
+        </div>
+        <div class="review">
+          ${shown.length ? shown.map(x => `
+            <div class="ritem ${x.ok ? "ok" : ""}">
+              <div class="meta"><span>Q${x.k + 1}</span><span>·</span><span>${WEEK_LABEL(x.q.w)}</span><span>·</span><span>${x.ok ? "Correct" : x.skipped ? "Skipped" : "Wrong"}</span></div>
+              <div class="rq">${esc(x.q.q)}</div>
+              <div class="ropts">
+                ${x.it.order.map((oi, di) => {
+                  const cls = di === x.correctD ? "right" : di === x.d ? "wrong" : "";
+                  const tag = di === x.correctD ? (di === x.d ? "Your answer · Correct" : "Correct answer") : di === x.d ? "Your answer" : "";
+                  return `<div class="ropt ${cls}"><span class="key">${LETTERS[di]}</span><span class="txt">${esc(x.q.o[oi])}</span>${tag ? `<span class="rtag">${tag}</span>` : ""}</div>`;
+                }).join("")}
+              </div>
+              ${x.skipped ? `<div class="ans skip"><span class="lbl">Skipped</span><span>You did not answer this question.</span></div>` : ""}
+              ${whyHTML(x)}
+            </div>`).join("")
+          : `<div class="empty">No wrong answers. Every question was correct.</div>`}
+        </div>
+      </section>`;
+
+    document.getElementById("tab-wrong").onclick = () => renderResults("wrong");
+    document.getElementById("tab-all").onclick = () => renderResults("all");
+    const rw = document.getElementById("retryWrong");
+    if (rw) rw.onclick = () => {
+      buildRun(misses.map(x => x.it.id), { all: true, label: "Retry mistakes" });
+      renderQuestion(); window.scrollTo({ top: 0 });
+    };
+    document.getElementById("again").onclick = () => {
+      const ids = QUESTIONS.map((q, id) => id).filter(id => settings.weeks.includes(QUESTIONS[id].w));
+      buildRun(ids, { label: run.label }); renderQuestion(); window.scrollTo({ top: 0 });
+    };
+    document.getElementById("settingsBtn").onclick = () => { store.clear(); run = null; renderStart(); window.scrollTo({ top: 0 }); };
+  }
+
+  // Logo goes to the start page (an unfinished quiz is saved and can be resumed)
+  document.getElementById("homeBtn").onclick = () => {
+    if (run && !run.done) save();
+    else store.clear();
+    run = null;
+    renderStart();
+    window.scrollTo({ top: 0 });
+  };
+
+  // Keyboard shortcuts on the question screen
+  document.addEventListener("keydown", e => {
+    if (!run || run.done || !app.querySelector(".opts")) return;
+    if (e.target.matches && e.target.matches("input, textarea")) return;
+    const k = e.key.toUpperCase();
+    const n = run.items[run.i].order.length;
+    let d = LETTERS.indexOf(k);
+    if (d < 0 && /^[1-9]$/.test(k)) d = Number(k) - 1;
+    if (d >= 0 && d < n && !e.metaKey && !e.ctrlKey) { e.preventDefault(); choose(d); return; }
+    const onButton = e.target.closest && e.target.closest("button");
+    if (e.key === "Enter" && !onButton) { e.preventDefault(); next(); }
+    if (e.key === "ArrowRight" && !onButton) next();
+    if (e.key === "ArrowLeft" && !onButton) go(run.i - 1);
+  });
+
+  // Boot: show results if the last saved run was finished, else the start screen
+  const saved = store.get();
+  if (saved && saved.settings) settings = Object.assign(settings, saved.settings, { weeks: (saved.settings.weeks || WEEKS).filter(w => WEEKS.includes(w)) });
+  if (saved && saved.run && saved.run.done) { run = saved.run; renderResults("wrong"); }
+  else renderStart();
+})();

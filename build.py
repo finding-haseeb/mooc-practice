@@ -1,4 +1,4 @@
-"""Builds the quiz pages from src/quiz.html + data/questions.json.
+"""Builds the quiz pages from src/quiz.html + src/app.js + data/questions.json.
 
   index.html            -> full standalone page (GitHub Pages / Netlify / open locally)
   dist/quiz-body.html   -> same page without the <html> skeleton (for Claude Artifacts)
@@ -20,10 +20,16 @@ def tidy(s):
     return s
 
 
-data = [{"w": q["w"], "q": tidy(q["q"]), "o": [tidy(o) for o in q["o"]], "a": q["a"]} for q in questions]
+data = [
+    {"w": q["w"], "q": tidy(q["q"]), "o": [tidy(o) for o in q["o"]], "a": q["a"],
+     "why": q.get("why", ""), "x": q.get("x", [])}
+    for q in questions
+]
 
 with open(os.path.join(ROOT, "src", "quiz.html"), encoding="utf-8") as f:
     body = f.read().replace("/*QUESTIONS*/", "const QUESTIONS = " + json.dumps(data, ensure_ascii=False) + ";")
+with open(os.path.join(ROOT, "src", "app.js"), encoding="utf-8") as f:
+    body = body.replace("/*APP*/", f.read())
 
 os.makedirs(os.path.join(ROOT, "dist"), exist_ok=True)
 with open(os.path.join(ROOT, "dist", "quiz-body.html"), "w", encoding="utf-8") as f:
