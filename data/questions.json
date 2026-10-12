@@ -235,7 +235,7 @@
   "x": [
    null,
    "Learning changes social behaviour, but the brain's structure is physical.",
-   "The intended answer is physical structure; 'biological' is not the term used.",
+   "Learning does involve biology, but the course stresses that it changes the brain's physical structure (new and stronger connections between neurons).",
    "Physical is correct, so 'none' is wrong."
   ]
  },
@@ -396,9 +396,9 @@
   "why": "Ivan Pavlov discovered classical conditioning through his experiments with salivating dogs.",
   "x": [
    "Operant conditioning was developed by B.F. Skinner.",
-   "'Functional conditioning' is not a standard theory.",
+   "There is no theory called functional conditioning; Pavlov's work with dogs and bells is classical conditioning.",
    null,
-   "'Modern conditioning' is not a standard theory."
+   "There is no theory called modern conditioning; Pavlov is known for classical conditioning."
   ]
  },
  {
@@ -694,7 +694,7 @@
   "why": "Autobiographical episodic memory stores specific events from your own life.",
   "x": [
    "Declarative memory is the broader category of facts and events.",
-   "'Experimental episodic memory' is not a standard term.",
+   "Memory research has no 'experimental episodic memory' type; memories of your own life are called autobiographical episodic memory.",
    null,
    "Procedural memory is for skills such as riding a bike."
   ]
@@ -729,8 +729,8 @@
   "a": 2,
   "why": "A prototype is the most typical example of a category. We compare new things to it to categorize them.",
   "x": [
-   "'Protofit' is not a real term.",
-   "'Protobite' is not a real term.",
+   "'Protofit' is a made-up word; the typical example of a category is called a prototype.",
+   "'Protobite' is a made-up word; the typical example of a category is called a prototype.",
    null,
    "Prototype is correct, so 'none' is wrong."
   ]
@@ -1092,7 +1092,7 @@
    "EI is different from academic (IQ-type) intelligence.",
    "EI is not purely genetic; it can be developed.",
    null,
-   "'External intelligence' is not a recognised type."
+   "Psychology has no 'external intelligence'; EI is grouped with social intelligence because it deals with emotions and relationships."
   ]
  },
  {
@@ -1326,7 +1326,7 @@
    null,
    "Emotional feedback is about feelings, not task performance.",
    "Reinforcement strengthens behaviour; it is not mainly information.",
-   "'Physical feedback' is not the term used."
+   "Physical feedback (touch or movement cues) is not what tells learners about task success; that is cognitive feedback."
   ]
  },
  {
@@ -1359,8 +1359,8 @@
   "a": 3,
   "why": "Learning through play is active learning, because the learner is doing and exploring.",
   "x": [
-   "'Primary learning' is not the term used.",
-   "'Secondary learning' is not the term used.",
+   "'Primary' describes a level of schooling, not a kind of learning; play is called active learning because the child is doing and exploring.",
+   "'Secondary' describes a level of schooling, not a kind of learning; play is active learning.",
    "In play the learner is involved, not passive.",
    null
   ]
@@ -1942,7 +1942,7 @@
   "why": "Most formative assessment is informal, such as questions, observation and quick checks during learning.",
   "x": [
    "Formal assessment is more typical of summative tests.",
-   "'Incorrect' makes no sense here.",
+   "'Incorrect' describes an answer, not a kind of assessment. Formative assessment is classified as formal or informal, and most of it is informal.",
    "Much formative assessment is spoken or observed, not written.",
    null
   ]
@@ -1997,8 +1997,8 @@
   "x": [
    null,
    "'Cold' cognition is non-emotional reasoning.",
-   "'White' is not a term used here.",
-   "'Black' is not a term used here."
+   "Social cognition is split into 'hot' (emotional) and 'cold' (non-emotional) processing; there is no 'white' category.",
+   "Social cognition is split into 'hot' (emotional) and 'cold' (non-emotional) processing; there is no 'black' category."
   ]
  },
  {
@@ -2033,8 +2033,8 @@
   "x": [
    "'Selfish' is about behaviour, not the inability to take another view.",
    null,
-   "'Conscious-centric' is not a term.",
-   "'Emotional-centric' is not a term."
+   "Young children are not described as conscious-centric; Piaget's term for seeing only your own point of view is egocentric.",
+   "Young children are not described as emotional-centric; Piaget's term for seeing only your own point of view is egocentric."
   ]
  },
  {
@@ -2278,7 +2278,7 @@
    null,
    "This is the reverse direction.",
    "Reading to speaking is a language skill, not ESD.",
-   "Knowing to ignoring makes no sense."
+   "Moving from knowing to ignoring would mean less learning; ESD aims for active, learner-centred learning."
   ]
  },
  {

@@ -120,7 +120,7 @@
       <section class="hero">
         <span class="eyebrow">NPTEL assignment practice</span>
         <h1>Test yourself on all <em>${QUESTIONS.length}</em> questions</h1>
-        <p>One question at a time, with a short explanation for every answer. Turn on <b>Instant answer</b> at the top to see the answer as soon as you tap, or leave it off and get your score out of 100 at the end.</p>
+        <p>One question at a time, with an explanation for every answer. Turn on <b>Instant answer</b> at the top to see the answer as soon as you tap, or leave it off and get your score out of 100 at the end.</p>
         <div class="stats">
           <span><b>${QUESTIONS.length}</b> questions</span>
           <span><b>${WEEKS.length}</b> weeks</span>
@@ -251,8 +251,8 @@
       <div class="fb ${ok ? "ok" : ""}" role="status">
         <span class="fb-title">${ok ? "Correct" : "Incorrect"}</span>
         ${ok ? "" : `<p><span class="pill">Correct answer: ${LETTERS[correctD]}</span>${esc(q.o[q.a])}</p>`}
-        <p><b>Why:</b> ${esc(q.why || "")}</p>
-        ${ok || !q.x || !q.x[chosen] ? "" : `<p><b>Why ${LETTERS[d]} is wrong:</b> ${esc(q.x[chosen])}</p>`}
+        <p><b>Explanation:</b> ${esc(q.why || "")}</p>
+        ${ok || !q.x || !q.x[chosen] ? "" : `<p><b>Explanation of ${LETTERS[d]} (your answer):</b> ${esc(q.x[chosen])}</p>`}
       </div>`;
   }
   function renderQuestion(showConfirm) {
@@ -385,9 +385,9 @@
     const others = x.it.order.map((oi, di) => ({ oi, di })).filter(o => o.oi !== q.a && o.oi !== chosen && q.x && q.x[o.oi]);
     return `
       <div class="why">
-        <p><span class="wl g">Why ${LETTERS[x.correctD]} is correct</span>${esc(q.why || "")}</p>
-        ${!x.ok && !x.skipped && q.x && q.x[chosen] ? `<p><span class="wl r">Why your answer ${LETTERS[x.d]} is wrong</span>${esc(q.x[chosen])}</p>` : ""}
-        ${others.length ? `<details><summary>Why the other options are wrong</summary><ul>${others.map(o => `<li><b>${LETTERS[o.di]}.</b> ${esc(q.x[o.oi])}</li>`).join("")}</ul></details>` : ""}
+        <p><span class="wl g">Explanation · ${LETTERS[x.correctD]} is correct</span>${esc(q.why || "")}</p>
+        ${!x.ok && !x.skipped && q.x && q.x[chosen] ? `<p><span class="wl r">Explanation · your answer ${LETTERS[x.d]} is wrong</span>${esc(q.x[chosen])}</p>` : ""}
+        ${others.length ? `<details><summary>Explanation of the other options</summary><ul>${others.map(o => `<li><b>${LETTERS[o.di]}.</b> ${esc(q.x[o.oi])}</li>`).join("")}</ul></details>` : ""}
       </div>`;
   }
   function renderResults(tab) {
