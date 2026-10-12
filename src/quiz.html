@@ -1,4 +1,5 @@
-<title>Psychology of Learning Quiz</title>
+<title>MOOC Practice</title>
+<link rel="icon" type="image/png" href="/*LOGO64*/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@500;700&display=swap">
@@ -47,7 +48,7 @@ button:focus-visible, label:focus-within { outline: 3px solid var(--mark); outli
 .top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; background: none; border: 0; padding: 4px 6px 4px 0; border-radius: 8px; color: var(--ink); text-align: left; }
 .brand:hover { color: var(--accent); }
-.brand .dot { width: 26px; height: 26px; border-radius: 7px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-size: .8rem; font-family: var(--f-mono); }
+.brand .dot-unused { width: 26px; height: 26px; border-radius: 7px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-size: .8rem; font-family: var(--f-mono); }
 .ghost { background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: .88rem; color: var(--muted); }
 .ghost:hover { color: var(--ink); border-color: var(--muted); }
 
@@ -222,11 +223,30 @@ footer .credit b { font-family: var(--f-mono); color: var(--accent); font-weight
   .stat4 { grid-template-columns: 1fr 1fr; }
   .itoggle .lbl-long { display: none; }
 }
+
+/* brand with logo */
+.brand .logo { width: 34px; height: 34px; border-radius: 50%; flex: none; display: block; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
+.brand-name { font-family: var(--f-display); font-weight: 700; font-size: 1.05rem; }
+.brand-sub { font-family: var(--f-body); font-weight: 400; font-size: .76rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52vw; }
+.back { align-self: flex-start; font-size: .88rem; }
+
+/* subject picker */
+.subjects { display: flex; flex-direction: column; gap: 12px; }
+.subj { display: flex; align-items: center; gap: 16px; width: 100%; text-align: left; padding: 18px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); transition: border-color .12s, transform .12s; }
+.subj:hover { border-color: var(--accent); }
+.subj-badge { flex: none; width: 52px; height: 52px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-family: var(--f-mono); font-weight: 700; font-size: .95rem; }
+.subj-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; flex: 1; }
+.subj-name { font-family: var(--f-display); font-weight: 700; font-size: 1.12rem; overflow-wrap: anywhere; }
+.subj-meta { font-size: .84rem; color: var(--muted); }
+.subj-prog { font-size: .82rem; color: var(--muted); font-family: var(--f-mono); }
+.subj-prog b { color: var(--accent); font-weight: 700; }
+.subj-go { flex: none; font-size: 1.3rem; color: var(--accent); }
 </style>
 
 <div class="wrap">
   <header class="top">
-    <button class="brand" id="homeBtn" type="button" aria-label="Go to the start page"><span class="dot">PL</span>Psychology of Learning</button>
+    <button class="brand" id="homeBtn" type="button" aria-label="MOOC Practice home"><img class="logo" src="/*LOGO192*/" alt="" width="34" height="34"><span class="brand-text"><span class="brand-name">MOOC Practice</span><span class="brand-sub" id="brandSub" hidden></span></span></button>
     <div class="top-actions">
       <button class="itoggle" id="instantBtn" type="button" role="switch" aria-checked="false"><span class="track"></span>Instant <span class="lbl-long">answer</span></button>
       <button class="ghost" id="themeBtn" type="button">Light mode</button>
@@ -237,12 +257,12 @@ footer .credit b { font-family: var(--f-mono); color: var(--accent); font-weight
 
   <footer>
     <span class="credit">Made with care by <b>haseeb_production</b> · Designed by <b>madxmonkey</b></span>
-    <span>NPTEL · IIT Kharagpur · Weeks 0–12 practice</span>
+    <span>NPTEL assignment practice</span>
   </footer>
 </div>
 
 <script>
-/*QUESTIONS*/
+/*SUBJECTS*/
 </script>
 <script>
 /*APP*/

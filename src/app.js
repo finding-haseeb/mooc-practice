@@ -9,16 +9,26 @@
   function readJSON(key, fallback) { try { const v = JSON.parse(localStorage.getItem(key) || "null"); return v == null ? fallback : v; } catch (e) { return fallback; } }
   function writeJSON(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
   function removeKey(key) { try { localStorage.removeItem(key); } catch (e) {} }
-  const STORE_KEY = "pol-quiz-v1";
-  const store = { get: () => readJSON(STORE_KEY, null), set: v => writeJSON(STORE_KEY, v), clear: () => removeKey(STORE_KEY) };
+  // Everything below is kept separately for each subject: "mp:<subject>:<name>"
+  let subject = null;
+  let QUESTIONS = [], WEEKS = [];
+  const K = name => "mp:" + subject.id + ":" + name;
+  const store = { get: () => readJSON(K("quiz"), null), set: v => writeJSON(K("quiz"), v), clear: () => removeKey(K("quiz")) };
 
   // Per-question stats { [id]: {c: correct, w: wrong} }, attempt history, bookmarks
-  let stats = readJSON("pol-stats", {});
-  let history = readJSON("pol-history", []);
-  let bookmarks = new Set(readJSON("pol-bookmarks", []));
-  const saveStats = () => writeJSON("pol-stats", stats);
-  const saveHistory = () => writeJSON("pol-history", history);
-  const saveBookmarks = () => writeJSON("pol-bookmarks", [...bookmarks]);
+  let stats = {}, history = [], bookmarks = new Set();
+  const saveStats = () => writeJSON(K("stats"), stats);
+  const saveHistory = () => writeJSON(K("history"), history);
+  const saveBookmarks = () => writeJSON(K("bookmarks"), [...bookmarks]);
+
+  // Psychology of Learning used these keys before the site had several subjects
+  (function migrateOldKeys() {
+    const map = { "pol-quiz-v1": "quiz", "pol-stats": "stats", "pol-history": "history", "pol-bookmarks": "bookmarks" };
+    Object.keys(map).forEach(old => {
+      const nk = "mp:psychology_of_learning:" + map[old];
+      try { if (localStorage.getItem(old) != null && localStorage.getItem(nk) == null) localStorage.setItem(nk, localStorage.getItem(old)); localStorage.removeItem(old); } catch (e) {}
+    });
+  })();
 
   // ---------- Theme toggle: black (dark) by default ----------
   const themeBtn = document.getElementById("themeBtn");
@@ -27,21 +37,21 @@
   function setTheme(t) {
     root.setAttribute("data-theme", t);
     themeBtn.textContent = t === "light" ? "Dark mode" : "Light mode";
-    try { localStorage.setItem("pol-theme", t); } catch (e) {}
+    try { localStorage.setItem("mp-theme", t); } catch (e) {}
   }
   themeBtn.onclick = () => setTheme(isLight() ? "dark" : "light");
   let savedTheme = "dark";
-  try { savedTheme = localStorage.getItem("pol-theme") || "dark"; } catch (e) {}
+  try { savedTheme = localStorage.getItem("mp-theme") || localStorage.getItem("pol-theme") || "dark"; } catch (e) {}
   setTheme(savedTheme === "light" ? "light" : "dark");
 
   // ---------- Instant answer switch ----------
   const instantBtn = document.getElementById("instantBtn");
-  let instant = readJSON("pol-instant", false) === true;
+  let instant = readJSON("mp-instant", false) === true;
   function setInstant(on) {
     instant = on;
     instantBtn.setAttribute("aria-checked", String(on));
     instantBtn.title = on ? "Instant answer is on: the answer and explanation show as soon as you tap an option" : "Instant answer is off: answers are shown at the end";
-    writeJSON("pol-instant", on);
+    writeJSON("mp-instant", on);
   }
   instantBtn.onclick = () => {
     setInstant(!instant);
@@ -49,7 +59,6 @@
   };
   setInstant(instant);
 
-  const WEEKS = [...new Set(QUESTIONS.map(q => q.w))].sort((a, b) => a - b);
   const perWeek = w => QUESTIONS.filter(q => q.w === w).length;
 
   function shuffle(arr) {
@@ -72,7 +81,7 @@
   }
 
   // ---------- State ----------
-  let settings = { weeks: WEEKS.slice(), count: "all", shuffleQ: true, shuffleO: true };
+  let settings = { weeks: [], count: "all", shuffleQ: true, shuffleO: true };
   let run = null; // { items:[{id, order}], answers:[displayIdx|null], locked:[bool], i, done, elapsed, label }
 
   function buildRun(ids, opts) {
@@ -118,9 +127,10 @@
 
     app.innerHTML = `
       <section class="hero">
-        <span class="eyebrow">NPTEL assignment practice</span>
-        <h1>Test yourself on all <em>${QUESTIONS.length}</em> questions</h1>
-        <p>One question at a time, with an explanation for every answer. Turn on <b>Instant answer</b> at the top to see the answer as soon as you tap, or leave it off and get your score out of 100 at the end.</p>
+        <button class="linkish back" id="backHome" type="button">← All subjects</button>
+        <span class="eyebrow">NPTEL · ${esc(subject.institute)}</span>
+        <h1>${esc(subject.name)}</h1>
+        <p>Practise all <b>${QUESTIONS.length}</b> assignment questions one at a time, with an explanation for every answer. Turn on <b>Instant answer</b> at the top to see the answer as soon as you tap, or leave it off and get your score out of 100 at the end.</p>
         <div class="stats">
           <span><b>${QUESTIONS.length}</b> questions</span>
           <span><b>${WEEKS.length}</b> weeks</span>
@@ -236,7 +246,47 @@
         saveStats(); saveHistory(); saveBookmarks(); renderStart();
       };
     }
+    document.getElementById("backHome").onclick = goHome;
     readSettings();
+  }
+
+  // ---------- Home: pick a subject ----------
+  function subjectSummary(sj) {
+    const st = readJSON("mp:" + sj.id + ":stats", {});
+    const hist = readJSON("mp:" + sj.id + ":history", []);
+    let c = 0, w = 0; Object.values(st).forEach(s => { c += s.c || 0; w += s.w || 0; });
+    const saved = readJSON("mp:" + sj.id + ":quiz", null);
+    const inProgress = !!(saved && saved.run && !saved.run.done);
+    return { seen: Object.keys(st).length, acc: c + w ? Math.round((c / (c + w)) * 100) : null, taken: hist.length, inProgress };
+  }
+  function renderHome() {
+    subject = null; run = null;
+    setSubtitle("");
+    const total = SUBJECTS.reduce((n, sj) => n + sj.questions.length, 0);
+    app.innerHTML = `
+      <section class="hero">
+        <span class="eyebrow">NPTEL assignment practice</span>
+        <h1>MOOC <em>Practice</em></h1>
+        <p>Pick a subject and practise every weekly assignment question, with shuffled questions and options, instant answers, explanations and a score out of 100.</p>
+        <div class="stats"><span><b>${SUBJECTS.length}</b> subjects</span><span><b>${total}</b> questions</span></div>
+      </section>
+      <section class="subjects">
+        ${SUBJECTS.map(sj => {
+          const sm = subjectSummary(sj);
+          const weeks = [...new Set(sj.questions.map(q => q.w))].sort((a, b) => a - b);
+          return `
+          <button class="subj" type="button" data-id="${sj.id}">
+            <span class="subj-badge">${esc(sj.short)}</span>
+            <span class="subj-body">
+              <span class="subj-name">${esc(sj.name)}</span>
+              <span class="subj-meta">${esc(sj.institute)} · Weeks ${weeks[0]}–${weeks[weeks.length - 1]} · ${sj.questions.length} questions</span>
+              <span class="subj-prog">${sm.inProgress ? `<b>Quiz in progress</b> · ` : ""}${sm.seen}/${sj.questions.length} seen${sm.acc === null ? "" : ` · ${sm.acc}% accuracy`}${sm.taken ? ` · ${sm.taken} quiz${sm.taken === 1 ? "" : "zes"}` : ""}</span>
+            </span>
+            <span class="subj-go" aria-hidden="true">→</span>
+          </button>`;
+        }).join("")}
+      </section>`;
+    app.querySelectorAll(".subj").forEach(b => b.onclick = () => openSubject(b.dataset.id, true));
   }
 
   // ---------- Question screen ----------
@@ -467,14 +517,57 @@
     document.getElementById("settingsBtn").onclick = () => { store.clear(); run = null; renderStart(); window.scrollTo({ top: 0 }); };
   }
 
-  // Logo goes to the start page (an unfinished quiz is saved and can be resumed)
-  document.getElementById("homeBtn").onclick = () => {
+  // ---------- Navigation between subjects ----------
+  const subtitleEl = document.getElementById("brandSub");
+  function setSubtitle(t) { if (subtitleEl) { subtitleEl.textContent = t; subtitleEl.hidden = !t; } }
+  function leaveQuiz() {
+    if (!subject) return;
     if (run && !run.done) save();
-    else store.clear();
+    else if (run && run.done) store.clear();
+  }
+  function setHash(h) {
+    if (location.hash.replace("#", "") === h) return;
+    try { window.history.pushState(null, "", h ? "#" + h : location.pathname + location.search); }
+    catch (e) { try { location.hash = h; } catch (e2) {} }
+  }
+  function openSubject(id, push) {
+    const sj = SUBJECTS.find(x => x.id === id);
+    if (!sj) { renderHome(); return; }
+    leaveQuiz();
+    subject = sj;
+    QUESTIONS = sj.questions;
+    WEEKS = [...new Set(QUESTIONS.map(q => q.w))].sort((a, b) => a - b);
+    stats = readJSON(K("stats"), {});
+    history = readJSON(K("history"), []);
+    bookmarks = new Set(readJSON(K("bookmarks"), []));
+    settings = { weeks: WEEKS.slice(), count: "all", shuffleQ: true, shuffleO: true };
     run = null;
-    renderStart();
+    const saved = store.get();
+    if (saved && saved.settings) settings = Object.assign(settings, saved.settings, { weeks: (saved.settings.weeks || WEEKS).filter(w => WEEKS.includes(w)) });
+    if (!settings.weeks.length) settings.weeks = WEEKS.slice();
+    setSubtitle(sj.name);
+    if (push) setHash(sj.id);
+    if (saved && saved.run && saved.run.done) { run = saved.run; renderResults("wrong"); }
+    else renderStart();
     window.scrollTo({ top: 0 });
-  };
+  }
+  function goHome() {
+    leaveQuiz();
+    setHash("");
+    renderHome();
+    window.scrollTo({ top: 0 });
+  }
+
+  // Logo goes to the subject list (an unfinished quiz is saved and can be resumed)
+  document.getElementById("homeBtn").onclick = goHome;
+  window.addEventListener("popstate", route);
+  window.addEventListener("hashchange", route);
+  function route() {
+    const id = location.hash.replace("#", "");
+    if (subject && subject.id === id) return;
+    if (id && SUBJECTS.some(x => x.id === id)) openSubject(id, false);
+    else if (subject) { leaveQuiz(); renderHome(); }
+  }
 
   // Keyboard shortcuts on the question screen
   document.addEventListener("keydown", e => {
@@ -491,9 +584,8 @@
     if (e.key === "ArrowLeft" && !onButton) go(run.i - 1);
   });
 
-  // Boot: show results if the last saved run was finished, else the start screen
-  const saved = store.get();
-  if (saved && saved.settings) settings = Object.assign(settings, saved.settings, { weeks: (saved.settings.weeks || WEEKS).filter(w => WEEKS.includes(w)) });
-  if (saved && saved.run && saved.run.done) { run = saved.run; renderResults("wrong"); }
-  else renderStart();
+  // Boot: open the subject named in the link (#subject_id), else the subject list
+  const startId = location.hash.replace("#", "");
+  if (startId && SUBJECTS.some(x => x.id === startId)) openSubject(startId, false);
+  else renderHome();
 })();

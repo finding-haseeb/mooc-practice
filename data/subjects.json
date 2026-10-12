@@ -1,0 +1,14 @@
+[
+ {
+  "id": "psychology_of_learning",
+  "name": "Psychology of Learning",
+  "institute": "IIT Kharagpur",
+  "short": "PL"
+ },
+ {
+  "id": "introduction_to_internet_of_things",
+  "name": "Introduction to Internet of Things",
+  "institute": "IIT Kharagpur",
+  "short": "IoT"
+ }
+]
