@@ -12,7 +12,8 @@
   // Everything below is kept separately for each subject: "mp:<subject>:<name>"
   let subject = null;
   let QUESTIONS = [], WEEKS = [];
-  const K = name => "mp:" + subject.id + ":" + name;
+  const storeId = sj => sj.store || sj.id;
+  const K = name => "mp:" + storeId(subject) + ":" + name;
   const store = { get: () => readJSON(K("quiz"), null), set: v => writeJSON(K("quiz"), v), clear: () => removeKey(K("quiz")) };
 
   // Per-question stats { [id]: {c: correct, w: wrong} }, attempt history, bookmarks
@@ -252,10 +253,10 @@
 
   // ---------- Home: pick a subject ----------
   function subjectSummary(sj) {
-    const st = readJSON("mp:" + sj.id + ":stats", {});
-    const hist = readJSON("mp:" + sj.id + ":history", []);
+    const st = readJSON("mp:" + storeId(sj) + ":stats", {});
+    const hist = readJSON("mp:" + storeId(sj) + ":history", []);
     let c = 0, w = 0; Object.values(st).forEach(s => { c += s.c || 0; w += s.w || 0; });
-    const saved = readJSON("mp:" + sj.id + ":quiz", null);
+    const saved = readJSON("mp:" + storeId(sj) + ":quiz", null);
     const inProgress = !!(saved && saved.run && !saved.run.done);
     return { seen: Object.keys(st).length, acc: c + w ? Math.round((c / (c + w)) * 100) : null, taken: hist.length, inProgress };
   }
@@ -289,20 +290,33 @@
     app.querySelectorAll(".subj").forEach(b => b.onclick = () => openSubject(b.dataset.id, true));
   }
 
+  // ---------- Answers: a question has one correct option (a: number) or several (a: [numbers]) ----------
+  const isMulti = q => Array.isArray(q.a);
+  const correctSet = q => (isMulti(q) ? q.a : [q.a]);
+  const correctDs = (it, q) => correctSet(q).map(a => it.order.indexOf(a)).sort((x, y) => x - y);
+  const selDs = sel => (sel === null || sel === undefined ? [] : Array.isArray(sel) ? sel : [sel]);
+  function isRight(it, q, sel) {
+    const got = selDs(sel).map(d => it.order[d]).sort((x, y) => x - y);
+    const want = correctSet(q).slice().sort((x, y) => x - y);
+    return got.length === want.length && got.every((v, i) => v === want[i]);
+  }
+  const lettersOf = ds => ds.map(d => LETTERS[d]).join(", ");
+
   // ---------- Question screen ----------
   function correctCount() {
-    return run.items.reduce((n, it, k) => n + (run.answers[k] !== null && it.order[run.answers[k]] === QUESTIONS[it.id].a ? 1 : 0), 0);
+    return run.items.reduce((n, it, k) => n + (run.answers[k] !== null && run.locked[k] && isRight(it, QUESTIONS[it.id], run.answers[k]) ? 1 : 0), 0);
   }
-  function feedbackHTML(q, it, d) {
-    const correctD = it.order.indexOf(q.a);
-    const ok = d === correctD;
-    const chosen = it.order[d];
+  function feedbackHTML(q, it, sel) {
+    const ok = isRight(it, q, sel);
+    const cds = correctDs(it, q);
+    const mine = selDs(sel);
+    const chosen = mine.length === 1 ? it.order[mine[0]] : null;
     return `
       <div class="fb ${ok ? "ok" : ""}" role="status">
         <span class="fb-title">${ok ? "Correct" : "Incorrect"}</span>
-        ${ok ? "" : `<p><span class="pill">Correct answer: ${LETTERS[correctD]}</span>${esc(q.o[q.a])}</p>`}
+        ${ok ? "" : `<p><span class="pill">Correct answer${cds.length > 1 ? "s" : ""}: ${lettersOf(cds)}</span>${cds.map(d => esc(q.o[it.order[d]])).join("; ")}</p>`}
         <p><b>Explanation:</b> ${esc(q.why || "")}</p>
-        ${ok || !q.x || !q.x[chosen] ? "" : `<p><b>Explanation of ${LETTERS[d]} (your answer):</b> ${esc(q.x[chosen])}</p>`}
+        ${ok || chosen === null || !q.x || !q.x[chosen] ? "" : `<p><b>Explanation of ${LETTERS[mine[0]]} (your answer):</b> ${esc(q.x[chosen])}</p>`}
       </div>`;
   }
   function renderQuestion(showConfirm) {
@@ -310,9 +324,11 @@
     const it = run.items[run.i];
     const q = QUESTIONS[it.id];
     const sel = run.answers[run.i];
-    if (instant && sel !== null) run.locked[run.i] = true;
+    const multi = isMulti(q);
+    if (instant && sel !== null && !multi) run.locked[run.i] = true;
     const reveal = sel !== null && run.locked[run.i];
-    const correctD = it.order.indexOf(q.a);
+    const cds = correctDs(it, q);
+    const mine = selDs(sel);
     const answered = run.answers.filter(a => a !== null).length;
     const last = run.i === total - 1;
     const unanswered = total - answered;
@@ -330,16 +346,19 @@
           ${instant ? `<span class="score-so-far">${correctCount()} correct so far</span>` : `<span class="qnum mono">${String(run.i + 1).padStart(2, "0")}</span>`}
         </div>
         <div class="qtext" id="qtext">${esc(q.q)}</div>
-        <div class="opts" role="radiogroup" aria-labelledby="qtext">
+        ${multi ? `<span class="msq">Select all that apply</span>` : ""}
+        <div class="opts ${multi ? "multi" : ""}" role="${multi ? "group" : "radiogroup"}" aria-labelledby="qtext">
           ${it.order.map((oi, di) => {
-            const cls = reveal ? (di === correctD ? "is-right" : di === sel ? "is-wrong" : "") : "";
-            const mark = reveal ? (di === correctD ? "Correct" : di === sel ? "Your answer" : "") : "";
+            const isC = cds.includes(di), isMine = mine.includes(di);
+            const cls = reveal ? (isC ? "is-right" : isMine ? "is-wrong" : "") : "";
+            const mark = reveal ? (isC ? (isMine || !multi ? "Correct" : "Missed") : isMine ? "Your answer" : "") : "";
             return `
-            <button type="button" class="opt ${cls}" role="radio" id="opt-${di}" data-d="${di}" aria-checked="${sel === di}" ${reveal ? "disabled" : ""}>
+            <button type="button" class="opt ${cls}" role="${multi ? "checkbox" : "radio"}" id="opt-${di}" data-d="${di}" aria-checked="${isMine}" ${reveal ? "disabled" : ""}>
               <span class="key">${LETTERS[di]}</span><span class="txt">${esc(q.o[oi])}</span>${mark ? `<span class="mark">${mark}</span>` : ""}
             </button>`;
           }).join("")}
         </div>
+        ${instant && multi && !reveal ? `<button class="primary" id="checkBtn" type="button" ${sel === null ? "disabled" : ""}>Check answer</button>` : ""}
         ${reveal ? feedbackHTML(q, it, sel) : ""}
         ${showConfirm ? `
         <div class="confirm" role="alert">
@@ -356,11 +375,18 @@
             <button class="primary" id="nextBtn" type="button">${last ? "Finish quiz" : sel === null ? "Skip" : "Next"}</button>
           </div>
         </div>
-        <span class="hint">${instant ? "Instant answer is on: tap an option to see if it's right." : "Tip: press A–D or 1–4 to choose, Enter for next."}</span>
+        <span class="hint">${instant ? (multi ? "Instant answer is on: pick every correct option, then tap Check answer." : "Instant answer is on: tap an option to see if it's right.") : "Tip: press A–D or 1–4 to choose, Enter for next."}</span>
       </article>
       <div><button class="linkish" id="quitBtn" type="button">Quit to start screen</button></div>`;
 
     app.querySelectorAll(".opt").forEach(b => b.onclick = () => choose(Number(b.dataset.d)));
+    const checkBtn = document.getElementById("checkBtn");
+    if (checkBtn) checkBtn.onclick = () => {
+      if (run.answers[run.i] === null) return;
+      run.locked[run.i] = true; save(); renderQuestion();
+      const fb = app.querySelector(".fb");
+      if (fb && fb.getBoundingClientRect().bottom > window.innerHeight) fb.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    };
     document.getElementById("prevBtn").onclick = () => go(run.i - 1);
     document.getElementById("nextBtn").onclick = next;
     const endBtn = document.getElementById("endBtn");
@@ -379,6 +405,19 @@
   }
   function choose(d) {
     if (run.locked[run.i]) return;
+    if (isMulti(QUESTIONS[run.items[run.i].id])) {
+      const cur = selDs(run.answers[run.i]);
+      const nextSel = cur.includes(d) ? cur.filter(x => x !== d) : cur.concat(d).sort((x, y) => x - y);
+      run.answers[run.i] = nextSel.length ? nextSel : null;
+      save();
+      app.querySelectorAll(".opt").forEach(b => b.setAttribute("aria-checked", String(nextSel.includes(Number(b.dataset.d)))));
+      const cb = document.getElementById("checkBtn"); if (cb) cb.disabled = !nextSel.length;
+      const nb0 = document.getElementById("nextBtn");
+      if (nb0 && run.i !== run.items.length - 1) nb0.textContent = nextSel.length ? "Next" : "Skip";
+      const answered0 = run.answers.filter(a => a !== null).length;
+      app.querySelector(".bar i").style.width = (answered0 / run.items.length) * 100 + "%";
+      return;
+    }
     run.answers[run.i] = d;
     if (instant) {
       run.locked[run.i] = true; save();
@@ -425,18 +464,18 @@
     return run.items.map((it, k) => {
       const q = QUESTIONS[it.id];
       const d = run.answers[k];
-      const correctD = it.order.indexOf(q.a);
-      return { k, q, it, d, correctD, ok: d === correctD, skipped: d === null };
+      return { k, q, it, d, cds: correctDs(it, q), mine: selDs(d), ok: isRight(it, q, d), skipped: d === null };
     });
   }
   function whyHTML(x) {
     const q = x.q;
-    const chosen = x.d === null ? null : x.it.order[x.d];
-    const others = x.it.order.map((oi, di) => ({ oi, di })).filter(o => o.oi !== q.a && o.oi !== chosen && q.x && q.x[o.oi]);
+    const chosen = x.mine.length === 1 ? x.it.order[x.mine[0]] : null;
+    const right = correctSet(q);
+    const others = x.it.order.map((oi, di) => ({ oi, di })).filter(o => !right.includes(o.oi) && o.oi !== chosen && q.x && q.x[o.oi]);
     return `
       <div class="why">
-        <p><span class="wl g">Explanation · ${LETTERS[x.correctD]} is correct</span>${esc(q.why || "")}</p>
-        ${!x.ok && !x.skipped && q.x && q.x[chosen] ? `<p><span class="wl r">Explanation · your answer ${LETTERS[x.d]} is wrong</span>${esc(q.x[chosen])}</p>` : ""}
+        <p><span class="wl g">Explanation · ${lettersOf(x.cds)} ${x.cds.length > 1 ? "are" : "is"} correct</span>${esc(q.why || "")}</p>
+        ${!x.ok && chosen !== null && !right.includes(chosen) && q.x && q.x[chosen] ? `<p><span class="wl r">Explanation · your answer ${LETTERS[x.mine[0]]} is wrong</span>${esc(q.x[chosen])}</p>` : ""}
         ${others.length ? `<details><summary>Explanation of the other options</summary><ul>${others.map(o => `<li><b>${LETTERS[o.di]}.</b> ${esc(q.x[o.oi])}</li>`).join("")}</ul></details>` : ""}
       </div>`;
   }
@@ -488,11 +527,12 @@
           ${shown.length ? shown.map(x => `
             <div class="ritem ${x.ok ? "ok" : ""}">
               <div class="meta"><span>Q${x.k + 1}</span><span>·</span><span>${WEEK_LABEL(x.q.w)}</span><span>·</span><span>${x.ok ? "Correct" : x.skipped ? "Skipped" : "Wrong"}</span></div>
-              <div class="rq">${esc(x.q.q)}</div>
+              <div class="rq">${esc(x.q.q)}${isMulti(x.q) ? ` <span class="msq">Select all that apply</span>` : ""}</div>
               <div class="ropts">
                 ${x.it.order.map((oi, di) => {
-                  const cls = di === x.correctD ? "right" : di === x.d ? "wrong" : "";
-                  const tag = di === x.correctD ? (di === x.d ? "Your answer · Correct" : "Correct answer") : di === x.d ? "Your answer" : "";
+                  const isC = x.cds.includes(di), isMine = x.mine.includes(di);
+                  const cls = isC ? "right" : isMine ? "wrong" : "";
+                  const tag = isC ? (isMine ? "Your answer · Correct" : "Correct answer") : isMine ? "Your answer" : "";
                   return `<div class="ropt ${cls}"><span class="key">${LETTERS[di]}</span><span class="txt">${esc(x.q.o[oi])}</span>${tag ? `<span class="rtag">${tag}</span>` : ""}</div>`;
                 }).join("")}
               </div>

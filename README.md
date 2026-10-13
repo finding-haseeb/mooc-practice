@@ -3,7 +3,7 @@
 A practice website for NPTEL weekly assignment MCQs. Subjects:
 
 - **Psychology of Learning** (IIT Kharagpur), Weeks 0–12, 130 questions
-- **Introduction to Internet of Things** (IIT Kharagpur), Weeks 0–12, 189 questions
+- **Introduction to Internet of Things** (IIT Kharagpur), Weeks 0–12, 195 questions (17 with more than one correct answer)
 
 Direct links: add `#psychology_of_learning` or `#introduction_to_internet_of_things` to the site address.
 
@@ -14,6 +14,7 @@ Direct links: add `#psychology_of_learning` or `#introduction_to_internet_of_thi
 - Subject picker; each subject keeps its own progress, bookmarks and history
 - Questions shown one at a time
 - **Instant answer** switch at the top (off by default): tap an option and immediately see if it's right, the correct answer, and why
+- Multiple-answer questions ("Select all that apply"): pick every correct option, then Check answer; counted correct only when the selection matches exactly
 - **Why explanations** for every question in the report: why the correct answer is right, why your answer was wrong, and why each other option is wrong
 - Questions and answer options shuffled on every attempt (can be turned off)
 - Pick which weeks to include and how many questions (10, 25, 50 or all)
@@ -35,7 +36,7 @@ Direct links: add `#psychology_of_learning` or `#introduction_to_internet_of_thi
 | `assets/` | madxmonkey logo |
 | `src/app.js` | Quiz logic |
 | `data/subjects.json` | List of subjects (id, name, institute) |
-| `data/subjects/<id>.json` | Question bank (`w` = week, `q` = question, `o` = options, `a` = index of the correct option, `why` = explanation, `x` = why each wrong option is wrong) |
+| `data/subjects/<id>.json` | Question bank (`w` = week, `q` = question, `o` = options, `a` = index of the correct option (or a list of indexes for multiple-answer questions), `why` = explanation, `x` = why each wrong option is wrong) |
 | `build.py` | Combines the page, the script and the question bank into `index.html` |
 
 ## Editing questions
@@ -48,9 +49,10 @@ Direct links: add `#psychology_of_learning` or `#introduction_to_internet_of_thi
 
 - Psychology of Learning, Week 12: answers taken from the submitted assignment screenshots.
 - Psychology of Learning, Week 6 Q7: the source PDF marks the letter "a" but gives the answer text "all of the given"; the quiz uses "all of the given".
-- Introduction to IoT: questions and answer keys are from the weekly assignment solutions; explanations are written fresh for this site.
-- Introduction to IoT, Week 10: the "smart health" statements question is left out because its statements were missing from the source.
-- Introduction to IoT, Week 6 (Python slicing x[2:4]): the source listed "is" twice as an option; the duplicate was removed.
+- Introduction to IoT, Weeks 1–8: questions, answer keys and explanations from the official weekly assignment solution PDFs.
+- Introduction to IoT, Weeks 0 and 9–11: from the submitted assignment screenshots, using the "Accepted answer" shown; explanations written for this site.
+- Introduction to IoT, Week 12: no accepted answers were shown yet, so the submitted (selected) options are used; each was checked against the lecture topics.
+- Introduction to IoT, Week 11 Q5: the top of the question was cut off in the screenshot; the wording was rebuilt from its options (answer: Phasor Measurement Unit).
 
 ---
 
