@@ -2053,7 +2053,7 @@
  },
  {
   "w": 11,
-  "q": "Which smart grid device is used to measure the electrical waves (phasors) in the transmission system?",
+  "q": "Which device is used in a smart grid operation center to sample voltage and current for monitoring the transmission system?",
   "o": [
    "Phasor Measurement Unit (PMU)",
    "Data Aggregator Unit (DAU)",

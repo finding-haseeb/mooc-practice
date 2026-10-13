@@ -52,7 +52,6 @@ Direct links: add `#psychology_of_learning` or `#introduction_to_internet_of_thi
 - Introduction to IoT, Weeks 1–8: questions, answer keys and explanations from the official weekly assignment solution PDFs.
 - Introduction to IoT, Weeks 0 and 9–11: from the submitted assignment screenshots, using the "Accepted answer" shown; explanations written for this site.
 - Introduction to IoT, Week 12: no accepted answers were shown yet, so the submitted (selected) options are used; each was checked against the lecture topics.
-- Introduction to IoT, Week 11 Q5: the top of the question was cut off in the screenshot; the wording was rebuilt from its options (answer: Phasor Measurement Unit).
 
 ---
 
