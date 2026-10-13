@@ -131,7 +131,9 @@ button:focus-visible, label:focus-within { outline: 3px solid var(--mark); outli
 .ritem { border: 1px solid var(--line); border-left: 4px solid var(--bad); border-radius: 10px; padding: 14px 16px; background: var(--surface); display: flex; flex-direction: column; gap: 8px; }
 .ritem.ok { border-left-color: var(--good); }
 .ritem .rq { font-weight: 600; overflow-wrap: anywhere; }
-.ritem .meta { display: flex; gap: 8px; align-items: center; font-family: var(--f-mono); font-size: .72rem; color: var(--muted); }
+.ritem .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-family: var(--f-mono); font-size: .72rem; color: var(--muted); }
+.ritem .meta .rbm { margin-left: auto; font-family: var(--f-body); }
+.save-all { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); font-size: .88rem; color: var(--muted); }
 .ans { display: flex; gap: 8px; align-items: baseline; font-size: .93rem; overflow-wrap: anywhere; }
 .ans .lbl { flex: none; font-family: var(--f-mono); font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; padding: 2px 7px; border-radius: 6px; }
 .ans.yours .lbl { background: var(--bad-soft); color: var(--bad); }

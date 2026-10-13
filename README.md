@@ -21,6 +21,7 @@ Direct links: add `#psychology_of_learning` or `#introduction_to_internet_of_thi
 - Score out of 100, correct / wrong / skipped counts and time taken
 - Review of wrong answers showing every option: your wrong choice in red, the correct answer in green
 - "Retry my mistakes" to practise only the questions you got wrong
+- Save button on every question in the results review, plus "Save all wrong answers"; saved questions appear under Bookmarked
 - Progress stats: questions seen, accuracy, quizzes taken, best score
 - **Weak questions** drill (questions you get right less than 60% of the time) and **bookmarks**
 - Recent quiz history

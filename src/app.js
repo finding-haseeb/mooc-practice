@@ -523,10 +523,16 @@
           <button class="tab" role="tab" id="tab-wrong" aria-selected="${tab !== "all"}" type="button">Wrong answers (${misses.length})</button>
           <button class="tab" role="tab" id="tab-all" aria-selected="${tab === "all"}" type="button">All questions (${total})</button>
         </div>
+        ${tab !== "all" && misses.length ? `
+        <div class="save-all">
+          <span>${misses.filter(x => bookmarks.has(x.it.id)).length} of ${misses.length} saved to Bookmarks</span>
+          <button class="secondary" id="saveAllWrong" type="button" ${misses.every(x => bookmarks.has(x.it.id)) ? "disabled" : ""}>${misses.every(x => bookmarks.has(x.it.id)) ? "All wrong answers saved" : "Save all wrong answers"}</button>
+        </div>` : ""}
         <div class="review">
           ${shown.length ? shown.map(x => `
             <div class="ritem ${x.ok ? "ok" : ""}">
-              <div class="meta"><span>Q${x.k + 1}</span><span>·</span><span>${WEEK_LABEL(x.q.w)}</span><span>·</span><span>${x.ok ? "Correct" : x.skipped ? "Skipped" : "Wrong"}</span></div>
+              <div class="meta"><span>Q${x.k + 1}</span><span>·</span><span>${WEEK_LABEL(x.q.w)}</span><span>·</span><span>${x.ok ? "Correct" : x.skipped ? "Skipped" : "Wrong"}</span>
+                <button class="bm rbm" type="button" data-id="${x.it.id}" aria-pressed="${bookmarks.has(x.it.id)}">${BM_ICON}${bookmarks.has(x.it.id) ? "Saved" : "Save"}</button></div>
               <div class="rq">${esc(x.q.q)}${isMulti(x.q) ? ` <span class="msq">Select all that apply</span>` : ""}</div>
               <div class="ropts">
                 ${x.it.order.map((oi, di) => {
@@ -544,6 +550,18 @@
       </section>`;
 
     document.getElementById("tab-wrong").onclick = () => renderResults("wrong");
+    app.querySelectorAll(".rbm").forEach(b => b.onclick = () => {
+      const id = Number(b.dataset.id);
+      if (bookmarks.has(id)) bookmarks.delete(id); else bookmarks.add(id);
+      saveBookmarks();
+      const y = window.scrollY; renderResults(tab); window.scrollTo({ top: y });
+    });
+    const saveAll = document.getElementById("saveAllWrong");
+    if (saveAll) saveAll.onclick = () => {
+      misses.forEach(x => bookmarks.add(x.it.id));
+      saveBookmarks();
+      const y = window.scrollY; renderResults(tab); window.scrollTo({ top: y });
+    };
     document.getElementById("tab-all").onclick = () => renderResults("all");
     const rw = document.getElementById("retryWrong");
     if (rw) rw.onclick = () => {
