@@ -2,6 +2,11 @@
   if (window.__polQuizStarted) return;
   window.__polQuizStarted = true;
   const WEEK_LABEL = w => "Week " + w;
+  // A week is a number (7) or a label such as "7 2026"; sort by its leading number, labelled weeks after plain ones
+  const weekNum = w => parseFloat(String(w)) || 0;
+  const weekSort = (a, b) => weekNum(a) - weekNum(b) || (typeof a === "number" ? -1 : 1) - (typeof b === "number" ? -1 : 1) || String(a).localeCompare(String(b));
+  const weekSlug = w => String(w).replace(/[^a-z0-9]+/gi, "-");
+  const inWeeks = (list, w) => list.some(x => String(x) === String(w));
   const LETTERS = ["A", "B", "C", "D", "E", "F"];
   const app = document.getElementById("app");
 
@@ -160,7 +165,7 @@
           </div>
           <div class="chips" id="weekChips">
             ${WEEKS.map(w => `
-              <label class="chip"><input type="checkbox" id="wk-${w}" value="${w}" ${settings.weeks.includes(w) ? "checked" : ""}>
+              <label class="chip"><input type="checkbox" id="wk-${weekSlug(w)}" value="${esc(String(w))}" ${inWeeks(settings.weeks, w) ? "checked" : ""}>
               <span>${WEEK_LABEL(w)} <small>${perWeek(w)}</small></span></label>`).join("")}
           </div>
         </div>
@@ -212,11 +217,11 @@
 
     const startBtn = document.getElementById("startBtn");
     function readSettings() {
-      settings.weeks = [...app.querySelectorAll("#weekChips input:checked")].map(i => Number(i.value));
+      settings.weeks = [...app.querySelectorAll("#weekChips input:checked")].map(i => WEEKS.find(w => String(w) === i.value)).filter(w => w !== undefined);
       settings.count = (app.querySelector("#countChips input:checked") || {}).value || "all";
       settings.shuffleQ = document.getElementById("shQ").checked;
       settings.shuffleO = document.getElementById("shO").checked;
-      const pool = QUESTIONS.filter(q => settings.weeks.includes(q.w)).length;
+      const pool = QUESTIONS.filter(q => inWeeks(settings.weeks, q.w)).length;
       const n = settings.count === "all" ? pool : Math.min(pool, Number(settings.count));
       startBtn.textContent = pool ? `Start quiz · ${n} question${n === 1 ? "" : "s"}` : "Pick at least one week";
       startBtn.disabled = !pool;
@@ -226,7 +231,7 @@
     document.getElementById("noneW").onclick = () => { app.querySelectorAll("#weekChips input").forEach(i => i.checked = false); readSettings(); };
     startBtn.onclick = () => {
       readSettings();
-      const ids = QUESTIONS.map((q, id) => id).filter(id => settings.weeks.includes(QUESTIONS[id].w));
+      const ids = QUESTIONS.map((q, id) => id).filter(id => inWeeks(settings.weeks, QUESTIONS[id].w));
       const label = settings.weeks.length === WEEKS.length ? "All weeks" : settings.weeks.length === 1 ? WEEK_LABEL(settings.weeks[0]) : settings.weeks.length + " weeks";
       buildRun(ids, { label });
       renderQuestion();
@@ -280,7 +285,7 @@
             <span class="subj-badge">${esc(sj.short)}</span>
             <span class="subj-body">
               <span class="subj-name">${esc(sj.name)}</span>
-              <span class="subj-meta">${esc(sj.institute)} · Weeks ${weeks[0]}–${weeks[weeks.length - 1]} · ${sj.questions.length} questions</span>
+              <span class="subj-meta">${esc(sj.institute)} · Weeks ${Math.min(...weeks.map(weekNum))}–${Math.max(...weeks.map(weekNum))} · ${sj.questions.length} questions</span>
               <span class="subj-prog">${sm.inProgress ? `<b>Quiz in progress</b> · ` : ""}${sm.seen}/${sj.questions.length} seen${sm.acc === null ? "" : ` · ${sm.acc}% accuracy`}${sm.taken ? ` · ${sm.taken} quiz${sm.taken === 1 ? "" : "zes"}` : ""}</span>
             </span>
             <span class="subj-go" aria-hidden="true">→</span>
@@ -569,7 +574,7 @@
       renderQuestion(); window.scrollTo({ top: 0 });
     };
     document.getElementById("again").onclick = () => {
-      const ids = QUESTIONS.map((q, id) => id).filter(id => settings.weeks.includes(QUESTIONS[id].w));
+      const ids = QUESTIONS.map((q, id) => id).filter(id => inWeeks(settings.weeks, QUESTIONS[id].w));
       buildRun(ids, { label: run.label }); renderQuestion(); window.scrollTo({ top: 0 });
     };
     document.getElementById("settingsBtn").onclick = () => { store.clear(); run = null; renderStart(); window.scrollTo({ top: 0 }); };
@@ -594,14 +599,20 @@
     leaveQuiz();
     subject = sj;
     QUESTIONS = sj.questions;
-    WEEKS = [...new Set(QUESTIONS.map(q => q.w))].sort((a, b) => a - b);
+    WEEKS = [...new Set(QUESTIONS.map(q => q.w))].sort(weekSort);
     stats = readJSON(K("stats"), {});
     history = readJSON(K("history"), []);
     bookmarks = new Set(readJSON(K("bookmarks"), []));
     settings = { weeks: WEEKS.slice(), count: "all", shuffleQ: true, shuffleO: true };
     run = null;
     const saved = store.get();
-    if (saved && saved.settings) settings = Object.assign(settings, saved.settings, { weeks: (saved.settings.weeks || WEEKS).filter(w => WEEKS.includes(w)) });
+    if (saved && saved.settings) {
+      // Weeks added since the last visit start out selected
+      const known = saved.settings.knownWeeks || WEEKS.filter(w => typeof w === "number");
+      const fresh = WEEKS.filter(w => !inWeeks(known, w));
+      settings = Object.assign(settings, saved.settings, { weeks: WEEKS.filter(w => inWeeks(saved.settings.weeks || WEEKS, w) || inWeeks(fresh, w)) });
+    }
+    settings.knownWeeks = WEEKS.slice();
     if (!settings.weeks.length) settings.weeks = WEEKS.slice();
     setSubtitle(sj.name);
     if (push) setHash(sj.id);

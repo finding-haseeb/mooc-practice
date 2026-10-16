@@ -2,7 +2,7 @@
 
 A practice website for NPTEL weekly assignment MCQs. Subjects:
 
-- **Psychology of Learning** (IIT Kharagpur), Weeks 0–12, 130 questions
+- **Psychology of Learning** (IIT Kharagpur), Weeks 0–12 plus "Week 7 2026", 140 questions
 - **Introduction to Internet of Things** (IIT Kharagpur), Weeks 0–12, 195 questions (17 with more than one correct answer)
 
 Direct links: add `#psychology_of_learning` or `#introduction_to_internet_of_things` to the site address.
@@ -49,6 +49,7 @@ Direct links: add `#psychology_of_learning` or `#introduction_to_internet_of_thi
 ## Notes
 
 - Psychology of Learning, Week 12: answers taken from the submitted assignment screenshots.
+- Psychology of Learning, "Week 7 2026": the 2026 Week 7 assignment, from screenshots with the accepted answers; kept separate from the original Week 7.
 - Psychology of Learning, Week 6 Q7: the source PDF marks the letter "a" but gives the answer text "all of the given"; the quiz uses "all of the given".
 - Introduction to IoT, Weeks 1–8: questions, answer keys and explanations from the official weekly assignment solution PDFs.
 - Introduction to IoT, Weeks 0 and 9–11: from the submitted assignment screenshots, using the "Accepted answer" shown; explanations written for this site.

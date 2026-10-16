@@ -2298,5 +2298,177 @@
    "Strategic competency is about planning and acting.",
    "Normative competency is about values and norms."
   ]
+ },
+ {
+  "w": "7 2026",
+  "q": "Simon defined learning as changes in a system that result in ___ over time on tasks similar to those done previously.",
+  "o": [
+   "boredom",
+   "decreased anxiety",
+   "improved performance",
+   "reduced performance"
+  ],
+  "a": 2,
+  "why": "Herbert Simon defined learning as changes in a system that lead to improved performance over time on similar tasks.",
+  "x": [
+   "Boredom is not an outcome of learning in Simon's definition.",
+   "Reduced anxiety can happen, but it is not what the definition describes.",
+   null,
+   "Learning leads to better performance, not worse."
+  ]
+ },
+ {
+  "w": "7 2026",
+  "q": "Robert Gagne defined learning as ___.",
+  "o": [
+   "a change in human disposition or capacity",
+   "a change that persists over a period of time",
+   "a change not simply ascribable to processes of growth",
+   "all of the given"
+  ],
+  "a": 3,
+  "why": "Gagne defined learning as a change in human disposition or capacity that persists over time and is not simply due to growth, so all three parts are included.",
+  "x": [
+   "This is part of Gagne's definition, but so are the others.",
+   "This is part of Gagne's definition, but so are the others.",
+   "This is part of Gagne's definition, but so are the others.",
+   null
+  ]
+ },
+ {
+  "w": "7 2026",
+  "q": "Psychomotor skills are ___ skills.",
+  "o": [
+   "cognitive",
+   "spiritual",
+   "mental",
+   "physical"
+  ],
+  "a": 3,
+  "why": "Psychomotor skills are physical skills that involve coordinated movement, such as writing or playing a sport.",
+  "x": [
+   "Cognitive skills are thinking skills, a different domain.",
+   "Spiritual skills are not part of Bloom's domains.",
+   "Mental skills belong to the cognitive domain.",
+   null
+  ]
+ },
+ {
+  "w": "7 2026",
+  "q": "Returning to experience refers to ___.",
+  "o": [
+   "attending to feelings",
+   "re-examining experience in the light of one’s intent and existing knowledge",
+   "using helpful feelings and removing obstructive ones",
+   "recalling or detailing salient events"
+  ],
+  "a": 3,
+  "why": "In Boud's model of reflection, returning to experience means recalling and describing the important events of the experience.",
+  "x": [
+   "Attending to feelings is the next stage, dealing with emotions.",
+   "Re-examining (re-evaluating) the experience is a later stage.",
+   "Using helpful feelings and removing obstructive ones is part of attending to feelings.",
+   null
+  ]
+ },
+ {
+  "w": "7 2026",
+  "q": "Which of the following assumptions does not come under the behaviorist orientation to learning?",
+  "o": [
+   "Differences between individuals are important as they will affect learning",
+   "Observable behavior rather than internal thought processes are the focus of study",
+   "Environment shapes one’s behavior",
+   "The principle of contiguity is central"
+  ],
+  "a": 0,
+  "why": "Behaviorism focuses on observable behaviour, the environment and contiguity; stressing individual differences is not one of its assumptions.",
+  "x": [
+   null,
+   "This IS a behaviorist assumption: study observable behaviour.",
+   "This IS a behaviorist assumption: the environment shapes behaviour.",
+   "This IS a behaviorist assumption: contiguity is central."
+  ]
+ },
+ {
+  "w": "7 2026",
+  "q": "Reinforcement can come through sharing of results rather than a reward.",
+  "o": [
+   "True",
+   "False"
+  ],
+  "a": 0,
+  "why": "True. Telling learners their results (knowledge of results) can reinforce learning just as a reward does.",
+  "x": [
+   null,
+   "Sharing results is itself a form of reinforcement, so this is not false."
+  ]
+ },
+ {
+  "w": "7 2026",
+  "q": "___ has contributed to the humanistic orientations to learning.",
+  "o": [
+   "linguistic",
+   "kinesthetic",
+   "visual",
+   "Carl Rogers"
+  ],
+  "a": 3,
+  "why": "Carl Rogers, with Maslow, is a key figure in the humanistic orientation, which focuses on the whole person and self-directed growth.",
+  "x": [
+   "Linguistic is a learning style, not a contributor.",
+   "Kinesthetic is a learning style, not a contributor.",
+   "Visual is a learning style, not a contributor.",
+   null
+  ]
+ },
+ {
+  "w": "7 2026",
+  "q": "In the process of learning, which of the following is not a component of output?",
+  "o": [
+   "certification",
+   "attitude change",
+   "knowledge enhancement",
+   "training plan"
+  ],
+  "a": 3,
+  "why": "A training plan is an input to the learning process; certification, attitude change and knowledge enhancement are outputs.",
+  "x": [
+   "Certification IS an output of learning.",
+   "Attitude change IS an output of learning.",
+   "Knowledge enhancement IS an output of learning.",
+   null
+  ]
+ },
+ {
+  "w": "7 2026",
+  "q": "Ambience, space and decorum do not affect learning.",
+  "o": [
+   "True",
+   "False"
+  ],
+  "a": 1,
+  "why": "False. The learning environment, including ambience, space and decorum, affects how well people learn.",
+  "x": [
+   "The physical environment does affect learning, so this is untrue.",
+   null
+  ]
+ },
+ {
+  "w": "7 2026",
+  "q": "Role-playing can motivate ___ type of learners effectively.",
+  "o": [
+   "solitary",
+   "social",
+   "reading/writing",
+   "logical/analytical"
+  ],
+  "a": 1,
+  "why": "Role-play is interactive and done with others, so it motivates social (interpersonal) learners.",
+  "x": [
+   "Solitary learners prefer working alone.",
+   null,
+   "Reading/writing learners prefer text-based tasks.",
+   "Logical learners prefer reasoning and systems."
+  ]
  }
 ]
